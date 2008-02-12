@@ -4,6 +4,7 @@ from wizard.py  import Wizard
 from priest.py  import Priest
 from monster.py import Monster
 from dragon.py  import Dragon
+from entity.py  import Entity
 from character.py import *
 
 def separateActiveCharacters(characters):
@@ -119,13 +120,13 @@ if __name__ == "__main__":
   
   game = Game()
 
-  game.PCs.append(Rogue())
-  game.PCs.append(Warrior())
-  game.PCs.append(Priest())
-  game.PCs.append(Wizard())
+  game.PCs.append(Entity(Rogue(),   Animation("rogue")))
+  game.PCs.append(Entity(Warrior(), Animation("warrior")))
+  game.PCs.append(Entity(Priest(),  Animation("priest")))
+  game.PCs.append(Entity(Wizard(),  Animation("wizard")))
 
-  game.NPCs.append(Monster())
-  game.NPCs.append(Dragon())
-  game.NPCs.append(Monster())
+  game.NPCs.append(Entity(Monster(), Animation("monster")))
+  game.NPCs.append(Entity(Dragon(),  Animation("dragon")))
+  game.NPCs.append(Entity(Monster(), Animation("monster")))
 
   game.combatLoop()
