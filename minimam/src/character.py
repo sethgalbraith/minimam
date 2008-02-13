@@ -12,9 +12,7 @@ GONE = 2
 
 class Character:
 
-  '''
-  Abstract base class for minimam Role-Playing Game characters.
-  '''
+  '''Abstract base class for minimam Role-Playing Game characters.'''
 
   def __init__(self, level = 0):
     self.setLevel(level)
@@ -29,24 +27,17 @@ class Character:
     '''
     text = self.__class__.__name__
     text = "level " + self.getLevel() + " " + text
-    if self.health == HEALTHY:
-      text = "healthy " + text
-    if self.health == INJURED:
-      text = "injured " + text
-    if self.health == INCAPACITATED:
-      text = "incapacitated " + text
+    if self.isHealthy():       text = "healthy " + text
+    if self.isInjured():       text = "injured " + text
+    if self.isIncapacitated(): text = "incapacitated " + text
     return text
 
   def __repr__(self):
-    '''
-    Return a string representation of the Character between "<" and ">".
-    '''
+    '''Return a string representation of the Character between "<" and ">"'''
     return "<" + self.__str() + ">"
 
   def getLevel(self):
-    '''
-    Return the character's current level.
-    '''
+    '''Return the character's current level.'''
     if self.character_points < 10:    return 0
     if self.character_points < 100:   return 1
     if self.character_points < 1000:  return 2
@@ -54,14 +45,13 @@ class Character:
     return 4
 
   def setLevel(self, new_level):
-    '''
-    Set the character's level and give him the minimum CP for that level.
-    '''
+    '''Set the character's level and give him the minimum CP for that level.'''
     self.character_points = pow(10, new_level)
 
   def roll(self):
     '''
-    Simulate the value of rolling one six-sided and adding the character's level.
+    Simulate the value of rolling one six-sided die
+    and adding the character's level.
     '''
     return random.randint(1,6) + self.getLevel()
 
@@ -75,30 +65,20 @@ class Character:
     return self.roll()
 
   def takeNormalDamage(self):
-    '''
-    Be injured or incapacitated by a normal attack.
-    '''
+    '''Be injured or incapacitated by a normal attack.'''
     self.escape = STAYING
-    if self.health == INJURED:
-      self.health = INCAPACITATED
-    elif self.health == HEALTHY:
-      self.health = INJURED
+    if self.isHealthy(): self.health = INJURED
+    else:                self.health = INCAPACITATED
 
   def takeFireballDamage(self):
-    '''
-    Be incapacitated by a Wizard or Dragon's fireball.
-    '''
+    '''Be incapacitated by a Wizard or Dragon's fireball.'''
     self.escape = STAYING
     self.health = INCAPACITATED
 
   def heal(self):
-    '''
-    Be healed.
-    '''
-    if self.health == INJURED:
-      self.health = HEALTHY
-    elif self.health == INCAPACITATED:
-      self.health = INJURED
+    '''Be healed.'''
+    if self.isIncapacitated(): self.health = INJURED
+    else:                      self.health = HEALTHY
 
   def attack(self, other):
     '''
@@ -111,11 +91,11 @@ class Character:
     else:
       return False
 
-  def tryEscaping(self):
+  def startEscaping(self):
     '''Call this when the character starts to escape.'''
     self.escape = LEAVING
 
-  def escape(self):
+  def finishEscaping(self):
     '''Call this when the character has been escaping for a full round.'''
     self.escape = GONE
     
