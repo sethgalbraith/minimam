@@ -112,20 +112,31 @@ class Character:
       return False
 
   def tryEscaping(self):
+    '''Call this when the character starts to escape.'''
     self.escape = LEAVING
 
+  def escape(self):
+    '''Call this when the character has been escaping for a full round.'''
+    self.escape = GONE
+    
   def isEscaping(self):
     return self.escape == LEAVING
 
-  def escape(self):
-    self.escape = GONE
-
   def isGone(self):
     return self.escape == GONE
-      
+
   def isInjured(self):
     return self.health == INJURED
       
   def isIncapacitated(self):
     return self.health == INCAPACITATED
+
+  def isHealthy(self):
+    return self.health == HEALTHY
+
+  def isHealer(self):
+    return False
+
+  def isFirst(self):
+    return False
 

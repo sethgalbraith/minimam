@@ -1,4 +1,4 @@
-from character.py import *
+from character import Character
 
 class Rogue(Character):
 
@@ -6,7 +6,10 @@ class Rogue(Character):
     return self.roll() + 1
 
   def defenseRoll(self):
-    if self.escape == LEAVING:
+    if self.isEscaping():
       return self.roll() + 1
     else:
       return self.roll()
+
+  def isFirst(self):
+    return True
