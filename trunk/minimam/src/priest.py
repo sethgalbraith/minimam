@@ -1,4 +1,7 @@
-from character.py import *
+from character import Character
 
 class Priest(Character):
-  pass
+  
+  def isHealer(self):
+    return True
+

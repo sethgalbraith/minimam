@@ -1,4 +1,4 @@
-from character.py import *
+from character import Character
 
 class Monster(Character):
   pass

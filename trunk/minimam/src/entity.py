@@ -9,7 +9,7 @@ PUSH = 100 # distance a character gets pushed by an attack
 
 class Entity:  
 
-  def __init__(self, character):
+  def __init__(self, character, animation):
     self.character = character
     self.animation = animation
     self.home      = CENTER  # position at the start of each turn
@@ -101,4 +101,51 @@ class Entity:
       return
     frame = self.animation.getFrame(self.state, self.direction)
     screen.blit(frame, self.position)
-    
+
+  def getHealingTargets(self, allies):
+    '''Get a list of all allies who are not healthy or escaping.'''
+    targets = []
+    for ally in allies:
+      if not (ally.isHealthy() or ally.isEscaping()):
+        targets.append(ally)
+    return targets
+
+  def getAttackTargets(self, enemies):
+    '''Get a list of all enemies who are not incapacitated or gone.'''
+    targets = []
+    for enemy in enemies:
+      if not (enemy.isGone() or enemy.isIncapacitated()):
+        targets.append(enemy)
+    return targets
+
+  def randomAction(self, allies, enemies):
+    '''Heal or attack a random target.'''
+    if self.isHealer():
+      targets = self.getHealingTargets(allies)
+      if len(targets > 0):
+        self.heal(random.choice(targets))
+        return
+    targets = self.getAttackTargets(enemies)
+    if len(targets > 0):
+      self.attack(random.choice(targets))
+
+  def isEscaping(self):
+    return self.character.isEscaping()
+
+  def isGone(self):
+    return self.character.isGone()
+
+  def isInjured(self):
+    return self.character.isInjured()
+      
+  def isIncapacitated(self):
+    return self.character.isIncapacitated()
+
+  def isHealthy(self):
+    return self.character.isHealthy()
+
+  def isHealer(self):
+    return self.character.isHealer()
+
+  def isFirst(self):
+    return self.character.goesFirst()
