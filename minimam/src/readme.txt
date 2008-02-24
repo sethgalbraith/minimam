@@ -1,5 +1,7 @@
 Minimam uses the mini mam RPG rules at http://wiki.rpg.net/index.php/mini_mam
 
+Project home page: http://code.google.com/p/minimam/
+
 Minimam python code Copyright 2008 by Seth Galbraith
 
 Minimam is free software: you can redistribute it and/or modify
