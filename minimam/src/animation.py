@@ -14,20 +14,21 @@ class Animation:
 		if classname is not None: self.loadFrames(classname)
 		
 	def loadFrames(self, classname):
+		classname = classname.lower()
 		for direction in DIRECTIONS:
 			for state in STATES:
 				try:
-					filename = "%s_%s_%s.png" % (classname, state, direction)
+					filename = "%s-%s-%s.png" % (classname, state, direction)
 					surface = pygame.image.load(filename)
 					self.frames[direction][state] = surface 
-				except IOError:
+				except pygame.error:
 					try:
-						filename = "%s_%s.png" % (classname, state)
+						filename = "%s-%s.png" % (classname, state)
 						surface = pygame.image.load(filename)
 						if direction == "left":
-							surface = pygame.transform.mirror(surface)
+							surface = pygame.transform.flip(surface, True, False)
 						self.frames[direction][state] = surface
-					except IOError:
+					except pygame.error:
 						pass
 
 	def getFrame(self, state, direction):

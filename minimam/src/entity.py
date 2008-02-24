@@ -1,15 +1,18 @@
 import math
+import random
 from animation import Animation
 
-SPEED = 10        # distance moved by characters each turn
+SPEED = 1        # distance moved by characters each turn
 DISTANCE = 200    # distance between the center and home positions
 CENTER = 600, 450 # middle of the battlefield for all characters
 RIGHT_EDGE = 1300 # right side of the battlefield for fleeing enemies
 LEFT_EDGE = -100  # left side of the battlefield for fleeing PCs
 PUSH = 100        # distance a character gets pushed by an attack
 
-RIGHT = True  # directions are represented by true and false
-LEFT  = False # so the opposite direction is "not direction"
+RIGHT = "right"  # directions are represented by strings
+LEFT  = "left"   # for compatibility with the Animation class
+
+X, Y = 0, 1
 
 # Store animations in a dictionary with character class names as keys
 # ("Warrior", "Rogue", "Wizard", "Priest", "Monster", "Dragon")
@@ -56,18 +59,18 @@ class Entity:
     '''Find out whether the entity has reached it's goal'''
     x = self.goal[0] - self.position[0]
     y = self.goal[1] - self.position[1]
-    return math.sqrt(x * x, y * y) <= SPEED
+    return math.sqrt(x * x + y * y) <= SPEED
 
   def move(self):
     if self.isIncapacitated(): return
     x = self.goal[0] - self.position[0]
     y = self.goal[1] - self.position[1]
-    distance = math.sqrt(x * x, y * y)
+    distance = math.sqrt(x * x + y * y)
     if distance > SPEED:
       x = x * SPEED / distance
       y = y * SPEED / distance
-    self.position = (self.position[x] + x,
-                     self.position[y] + y)
+    self.position = (self.position[X] + x,
+                     self.position[Y] + y)
     if self.isAtGoal(): self.onReachingGoal()
 
   def onReachingGoal(self):
@@ -75,8 +78,8 @@ class Entity:
       self.target.character.heal()
     elif self.state == "attack":
       x, y = self.target.position
-      if self.facing == RIGHT: x = x + PUSH
-      else:                    x = x - PUSH
+      if self.direction == RIGHT: x = x + PUSH
+      else:                       x = x - PUSH
       self.target.position = x, y
       self.target.goal = self.target.home
       hit = self.character.attack(self.target.character)
@@ -123,9 +126,10 @@ class Entity:
     '''Draw the entity in his current state and position'''
     if self.character.isGone() and self.isAtGoal(): return
     if self.state == "heal" or self.isEscaping() or self.isGone():
-      frame = self.animation.getFrame(self.state, not self.direction)
-    else:
-      frame = self.animation.getFrame(self.state, self.direction)
+      if self.direction == RIGHT: direction = LEFT
+      else:                       direction = RIGHT
+    else:                         direction = self.direction
+    frame = self.animation.getFrame(self.state, direction)
     screen.blit(frame, self.position)
 
   def getHealingTargets(self, allies):
@@ -147,15 +151,15 @@ class Entity:
   def randomAction(self, allies, enemies):
     '''Escape, heal or attack a random target.'''
     if self.isInjured():
-      escape()
+      self.escape()
       return
     if self.isHealer():
       targets = self.getHealingTargets(allies)
-      if len(targets > 0):
+      if len(targets) > 0:
         self.heal(random.choice(targets))
         return
     targets = self.getAttackTargets(enemies)
-    if len(targets > 0):
+    if len(targets) > 0:
       self.attack(random.choice(targets))
 
   def isThinking(self):
@@ -194,4 +198,4 @@ class Entity:
     True if the entity is a Rogue or Dragon
     whose turns happen before other classes
     '''
-    return self.character.goesFirst()
+    return self.character.isFirst()
