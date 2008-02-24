@@ -9,7 +9,7 @@ from entity    import Entity
 import pygame
 
 WIDTH, HEIGHT = 1200, 900
-DELAY = 100
+DELAY = 10
 WHITE = 255, 255, 255
 
 def splitByClass(entities):
@@ -103,6 +103,10 @@ class Game:
     '''Take turns until the PCs or NPCs are defeated'''
     entities = self.sortedEntities()
     turn = 0
+    for i in range(len(self.PCs)):
+      self.PCs[i].setHome(i, len(self.PCs), False)
+    for i in range(len(self.NPCs)):
+      self.NPCs[i].setHome(i, len(self.NPCs), True)
     while not self.quit:
       if isDefeated(self.PCs):  return
       if isDefeated(self.NPCs): return
@@ -114,8 +118,8 @@ class Game:
     '''Explore the map'''
     # FIXME: create the exploration part of game
     self.fight()
-    if   isDefeated(self.PCs):  print "PCs won!"
-    elif isDefeated(self.NPCs): print "NPCs won!"
+    if   isDefeated(self.PCs):  print "NPCs won!"
+    elif isDefeated(self.NPCs): print "PCs won!"
     else:                       print "Who won?"
 
   def start(self):
@@ -129,16 +133,13 @@ if __name__ == "__main__":
   game = Game()
 
   game.PCs.append(Entity(Warrior()))
-  #game.PCs.append(Entity(Warrior()))
-  #game.PCs.append(Entity(Warrior()))
+  game.PCs.append(Entity(Warrior()))
+  game.PCs.append(Entity(Warrior()))
 
   game.NPCs.append(Entity(Rogue()))
-  #game.NPCs.append(Entity(Rogue()))
-  #game.NPCs.append(Entity(Rogue()))
-  #game.NPCs.append(Entity(Rogue()))
-
-  for NPC in game.NPCs:
-    NPC.direction = "left"
+  game.NPCs.append(Entity(Rogue()))
+  game.NPCs.append(Entity(Rogue()))
+  game.NPCs.append(Entity(Rogue()))
 
 #  game.PCs.append(Entity(Rogue()))
 #  game.PCs.append(Entity(Warrior()))

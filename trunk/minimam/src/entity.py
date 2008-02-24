@@ -2,7 +2,7 @@ import math
 import random
 from animation import Animation
 
-SPEED = 1        # distance moved by characters each turn
+SPEED = 10        # distance moved by characters each turn
 DISTANCE = 200    # distance between the center and home positions
 CENTER = 600, 450 # middle of the battlefield for all characters
 RIGHT_EDGE = 1300 # right side of the battlefield for fleeing enemies
@@ -38,7 +38,7 @@ class Entity:
     self.target    = None
     self.thinking  = False
 
-  def setHome(self, order, allies):
+  def setHome(self, order, allies, NPC):
     '''
     Find a home position for the entity.
     order indicates the entity's position in his party
@@ -46,25 +46,31 @@ class Entity:
     allies indicates the size of the entity's party.
     '''
     angle = math.pi * (order + 1) / (allies + 1)
-    x = math.cos(angle) * DISTANCE
-    y = math.sin(angle) * DISTANCE
-    if self.direction == RIGHT:
-      self.home = CENTER[0] - x, CENTER[1] + y
-      self.exit = LEFT_EDGE,     CENTER[1] + y
+    x = math.sin(angle) * DISTANCE
+    y = math.cos(angle) * DISTANCE
+    if NPC:
+      self.direction = LEFT
+      self.home = CENTER[X] + x, CENTER[Y] - y
+      self.exit = RIGHT_EDGE,    CENTER[Y] - y
     else:
-      self.home = CENTER[0] + x, CENTER[1] + y
-      self.exit = RIGHT_EDGE,    CENTER[1] + y
+      self.direction = RIGHT
+      self.home = CENTER[X] - x, CENTER[Y] - y
+      self.exit = LEFT_EDGE,     CENTER[Y] - y
+    self.position = self.home
+    self.goal     = self.home
     
   def isAtGoal(self):
     '''Find out whether the entity has reached it's goal'''
-    x = self.goal[0] - self.position[0]
-    y = self.goal[1] - self.position[1]
+    x = self.goal[X] - self.position[X]
+    y = self.goal[Y] - self.position[Y]
     return math.sqrt(x * x + y * y) <= SPEED
 
   def move(self):
-    if self.isIncapacitated(): return
-    x = self.goal[0] - self.position[0]
-    y = self.goal[1] - self.position[1]
+    if self.isIncapacitated():
+      self.state = "incapacitated"
+      return
+    x = self.goal[X] - self.position[X]
+    y = self.goal[Y] - self.position[Y]
     distance = math.sqrt(x * x + y * y)
     if distance > SPEED:
       x = x * SPEED / distance
@@ -74,6 +80,7 @@ class Entity:
     if self.isAtGoal(): self.onReachingGoal()
 
   def onReachingGoal(self):
+    if self.isGone() or self.isEscaping(): return
     if self.state == "heal":
       self.target.character.heal()
     elif self.state == "attack":
@@ -93,7 +100,9 @@ class Entity:
   def startTurn(self):
     if self.isEscaping():
       self.character.finishEscaping()
-    else:
+      self.goal = self.exit
+      self.thinking = False
+    elif not self.isGone():
       self.goal = CENTER
       self.thinking = True
       
@@ -119,7 +128,7 @@ class Entity:
   def escape(self):
     '''Try to escape'''
     self.character.startEscaping()
-    self.goal = self.exit
+    self.goal = self.home
     self.thinking = False
     
   def draw(self, screen):
