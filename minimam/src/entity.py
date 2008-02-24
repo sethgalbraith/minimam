@@ -1,18 +1,27 @@
+# Copyright 2008 Seth Galbraith
+#
+# This file is part of Minimam.
+#
+# Minimam is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Minimam is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Minimam.  If not, see <http://www.gnu.org/licenses/>.
+
 import math
 import random
 from animation import Animation
 
-SPEED = 10        # distance moved by characters each turn
-DISTANCE = 200    # distance between the center and home positions
-CENTER = 600, 450 # middle of the battlefield for all characters
-RIGHT_EDGE = 1300 # right side of the battlefield for fleeing enemies
-LEFT_EDGE = -100  # left side of the battlefield for fleeing PCs
-PUSH = 100        # distance a character gets pushed by an attack
-
 RIGHT = "right"  # directions are represented by strings
 LEFT  = "left"   # for compatibility with the Animation class
-
-X, Y = 0, 1
+X, Y  = 0, 1     # indices of X and Y axes in coordinate tuples
 
 # Store animations in a dictionary with character class names as keys
 # ("Warrior", "Rogue", "Wizard", "Priest", "Monster", "Dragon")
@@ -23,17 +32,18 @@ class Entity:
 
   '''A container for characters which adds animation and movement'''
 
-  def __init__(self, character):
+  def __init__(self, character, game):
     classname = character.__class__.__name__
     if classname not in animations:
         animations[classname] = Animation(classname)
     self.character = character
     self.animation = animations[classname]
-    self.home      = CENTER  # position at the start of each turn
-    self.exit      = CENTER  # a place to go when escaping
-    self.position  = CENTER  # current position
-    self.goal      = CENTER  # current destination
-    self.direction = RIGHT   # normal facing direction
+    self.game      = game
+    self.home      = game.center # position at the start of each turn
+    self.exit      = game.center # a place to go when escaping
+    self.position  = game.center # current position
+    self.goal      = game.center # current destination
+    self.direction = RIGHT       # normal facing direction
     self.state     = "healthy"
     self.target    = None
     self.thinking  = False
@@ -46,16 +56,16 @@ class Entity:
     allies indicates the size of the entity's party.
     '''
     angle = math.pi * (order + 1) / (allies + 1)
-    x = math.sin(angle) * DISTANCE
-    y = math.cos(angle) * DISTANCE
+    x = math.sin(angle) * self.game.distance
+    y = math.cos(angle) * self.game.distance * 0.75
     if NPC:
       self.direction = LEFT
-      self.home = CENTER[X] + x, CENTER[Y] - y
-      self.exit = RIGHT_EDGE,    CENTER[Y] - y
+      self.home = self.game.center[X] + x,          self.game.center[Y] - y
+      self.exit = self.game.width + self.game.edge, self.game.center[Y] - y
     else:
       self.direction = RIGHT
-      self.home = CENTER[X] - x, CENTER[Y] - y
-      self.exit = LEFT_EDGE,     CENTER[Y] - y
+      self.home = self.game.center[X] - x, self.game.center[Y] - y
+      self.exit = -self.game.edge,         self.game.center[Y] - y
     self.position = self.home
     self.goal     = self.home
     
@@ -63,7 +73,7 @@ class Entity:
     '''Find out whether the entity has reached it's goal'''
     x = self.goal[X] - self.position[X]
     y = self.goal[Y] - self.position[Y]
-    return math.sqrt(x * x + y * y) <= SPEED
+    return math.sqrt(x * x + y * y) <= self.game.speed
 
   def move(self):
     if self.isIncapacitated():
@@ -72,9 +82,9 @@ class Entity:
     x = self.goal[X] - self.position[X]
     y = self.goal[Y] - self.position[Y]
     distance = math.sqrt(x * x + y * y)
-    if distance > SPEED:
-      x = x * SPEED / distance
-      y = y * SPEED / distance
+    if distance > self.game.speed:
+      x = x * self.game.speed / distance
+      y = y * self.game.speed / distance
     self.position = (self.position[X] + x,
                      self.position[Y] + y)
     if self.isAtGoal(): self.onReachingGoal()
@@ -85,8 +95,8 @@ class Entity:
       self.target.character.heal()
     elif self.state == "attack":
       x, y = self.target.position
-      if self.direction == RIGHT: x = x + PUSH
-      else:                       x = x - PUSH
+      if self.direction == RIGHT: x = x + self.game.push
+      else:                       x = x - self.game.push
       self.target.position = x, y
       self.target.goal = self.target.home
       hit = self.character.attack(self.target.character)
@@ -103,7 +113,7 @@ class Entity:
       self.goal = self.exit
       self.thinking = False
     elif not self.isGone():
-      self.goal = CENTER
+      self.goal = self.game.center
       self.thinking = True
       
   def isTurnOver(self):
