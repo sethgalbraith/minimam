@@ -56,8 +56,8 @@ class Entity:
     allies indicates the size of the entity's party.
     '''
     angle = math.pi * (order + 1) / (allies + 1)
-    x = math.sin(angle) * self.game.distance
-    y = math.cos(angle) * self.game.distance * 0.75
+    x = math.sin(angle) * self.game.horizontal_spacing
+    y = math.cos(angle) * self.game.vertical_spacing
     if NPC:
       self.direction = LEFT
       self.home = self.game.center[X] + x,          self.game.center[Y] - y
@@ -149,7 +149,9 @@ class Entity:
       else:                       direction = RIGHT
     else:                         direction = self.direction
     frame = self.animation.getFrame(self.state, direction)
-    screen.blit(frame, self.position)
+    x, y = self.position
+    width, height = frame.get_rect().size
+    screen.blit(frame, (x - width / 2, y - height))
 
   def getHealingTargets(self, allies):
     '''Get a list of all allies who are not healthy or escaping.'''
