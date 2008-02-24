@@ -78,7 +78,8 @@ class Game:
     self.height = 480      # screen height
     self.delay = 10        # duration of animation frames in milliseconds
     self.speed = 10        # distance moved by characters each turn
-    self.distance = 200    # distance between the center and home positions
+    self.horizontal_spacing = 200
+    self.vertical_spacing   = 100
     self.center = 320, 240 # middle of the battlefield for all characters
     self.edge = 100        # distance from edge of screen to escape goal
     self.push = 100        # distance a character gets pushed by an attack
@@ -118,8 +119,9 @@ class Game:
     '''Draw all the characters'''
     #self.screen.fill(WHITE)
     self.screen.blit(self.background, (0,0))
-    for entity in self.PCs:  entity.draw(self.screen)
-    for entity in self.NPCs: entity.draw(self.screen)
+    entities = self.PCs + self.NPCs
+    entities.sort(lambda a, b: int(a.position[1] - b.position[1]))
+    for entity in entities:  entity.draw(self.screen)
     pygame.display.flip()
 
   def turn(self, entity):
@@ -167,7 +169,7 @@ class Game:
         break
     self.screen = pygame.display.set_mode((self.width, self.height),
                                           pygame.FULLSCREEN)
-    self.center = 0.50 * self.width, 0.67 * self.height
+    self.center = 0.50 * self.width, self.height - self.vertical_spacing
     self.background = pygame.image.load('All_Gizah_Pyramids-cropped.jpg')
     self.background = pygame.transform.scale(self.background, (self.width, self.height))
     self.background = self.background.convert()
