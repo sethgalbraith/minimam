@@ -90,6 +90,11 @@ class Character:
       return True
     else:
       return False
+  
+  def restore(self):
+    '''Remove temporary conditions such as damage and escaping.'''
+    self.health = HEALTHY
+    self.escape = STAYING
 
   def startEscaping(self):
     '''Call this when the character starts to escape.'''

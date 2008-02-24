@@ -8,7 +8,7 @@ from entity    import Entity
 
 import pygame
 
-WIDTH, HEIGHT = 1200, 900
+WIDTH, HEIGHT = 1200, 800
 DELAY = 10
 WHITE = 255, 255, 255
 
@@ -117,15 +117,18 @@ class Game:
   def explore(self):
     '''Explore the map'''
     # FIXME: create the exploration part of game
-    self.fight()
-    if   isDefeated(self.PCs):  print "NPCs won!"
-    elif isDefeated(self.NPCs): print "PCs won!"
-    else:                       print "Who won?"
+    while not self.quit:
+      self.fight()
+      if   isDefeated(self.PCs):  print "NPCs won!"
+      elif isDefeated(self.NPCs): print "PCs won!"
+      else:                       print "Who won?"
+      for entity in self.PCs:  entity.character.restore()
+      for entity in self.NPCs: entity.character.restore()          
 
   def start(self):
     '''Begin the game'''
     pygame.init()
-    self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    self.screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
     self.explore()
 
 if __name__ == "__main__":
