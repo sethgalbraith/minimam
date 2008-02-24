@@ -1,6 +1,16 @@
+This game requires Python (http://python.org) and Pygame (http://pygame.org).
+Run the game by running game.py. In Windows you should be able to double-click
+the game.py file. On other platforms run the command "python main.py"
+
+The game is not actually playable yet but you can watch two teams of characters
+fight each other.
+
 Minimam uses the mini mam RPG rules at http://wiki.rpg.net/index.php/mini_mam
 
 Project home page: http://code.google.com/p/minimam/
+
+
+COPYRIGHT AND LICENSES:
 
 Minimam python code Copyright 2008 by Seth Galbraith
 
