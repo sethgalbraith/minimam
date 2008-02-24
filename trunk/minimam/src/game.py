@@ -9,7 +9,7 @@ from entity    import Entity
 import pygame
 
 WIDTH, HEIGHT = 1200, 900
-DELAY = 10
+DELAY = 100
 WHITE = 255, 255, 255
 
 def splitByClass(entities):
@@ -89,7 +89,7 @@ class Game:
     for entity in self.NPCs: entity.draw(self.screen)
     pygame.display.flip()
 
-  def turn(self, current_entity):
+  def turn(self, entity):
     '''One character's turn'''
     if entity.isIncapacitated() or entity.isGone(): return
     entity.startTurn()
@@ -101,11 +101,11 @@ class Game:
 
   def fight(self):
     '''Take turns until the PCs or NPCs are defeated'''
-    entities = sortedEntities()
+    entities = self.sortedEntities()
     turn = 0
     while not self.quit:
-      if self.isDefeated(self.PCs):  return
-      if self.isDefeated(self.NPCs): return
+      if isDefeated(self.PCs):  return
+      if isDefeated(self.NPCs): return
       self.turn(entities[turn])
       turn = turn + 1
       if turn == len(entities): turn = 0
@@ -114,9 +114,9 @@ class Game:
     '''Explore the map'''
     # FIXME: create the exploration part of game
     self.fight()
-    if   self.isDefeated(self.PCs):  print "PCs won!"
-    elif self.isDefeated(self.NPCs): print "NPCs won!"
-    else:                            print "Who won?"
+    if   isDefeated(self.PCs):  print "PCs won!"
+    elif isDefeated(self.NPCs): print "NPCs won!"
+    else:                       print "Who won?"
 
   def start(self):
     '''Begin the game'''
@@ -128,13 +128,25 @@ if __name__ == "__main__":
   
   game = Game()
 
-  game.PCs.append(Entity(Rogue()))
   game.PCs.append(Entity(Warrior()))
-  game.PCs.append(Entity(Priest()))
-  game.PCs.append(Entity(Wizard()))
+  #game.PCs.append(Entity(Warrior()))
+  #game.PCs.append(Entity(Warrior()))
 
-  game.NPCs.append(Entity(Monster()))
-  game.NPCs.append(Entity(Dragon()))
-  game.NPCs.append(Entity(Monster()))
+  game.NPCs.append(Entity(Rogue()))
+  #game.NPCs.append(Entity(Rogue()))
+  #game.NPCs.append(Entity(Rogue()))
+  #game.NPCs.append(Entity(Rogue()))
+
+  for NPC in game.NPCs:
+    NPC.direction = "left"
+
+#  game.PCs.append(Entity(Rogue()))
+#  game.PCs.append(Entity(Warrior()))
+#  game.PCs.append(Entity(Priest()))
+#  game.PCs.append(Entity(Wizard()))
+#
+#  game.NPCs.append(Entity(Monster()))
+#  game.NPCs.append(Entity(Dragon()))
+#  game.NPCs.append(Entity(Monster()))
 
   game.start()
