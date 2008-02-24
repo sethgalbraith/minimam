@@ -1,3 +1,20 @@
+# Copyright 2008 Seth Galbraith
+#
+# This file is part of Minimam.
+#
+# Minimam is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Minimam is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Minimam.  If not, see <http://www.gnu.org/licenses/>.
+
 from warrior   import Warrior
 from rogue     import Rogue
 from wizard    import Wizard
@@ -8,9 +25,16 @@ from entity    import Entity
 
 import pygame
 
-WIDTH, HEIGHT = 1200, 800
-DELAY = 10
 WHITE = 255, 255, 255
+
+RESOLUTIONS = [
+  (1200, 900), # OLPC XO-1
+  (1280, 800), # my laptop
+  (800, 480),  # 7" laptop
+  (1280, 960),
+  (1024, 768),
+  (800, 600),
+  (640,480)]
 
 def splitByClass(entities):
   '''Separate Rogues and Dragons from other characters.'''
@@ -50,6 +74,14 @@ class Game:
     self.PCs  = [] # player characters
     self.NPCs = [] # non-player characters
     self.quit = False
+    self.width = 640       # screen width
+    self.height = 480      # screen height
+    self.delay = 10        # duration of animation frames in milliseconds
+    self.speed = 10        # distance moved by characters each turn
+    self.distance = 200    # distance between the center and home positions
+    self.center = 320, 240 # middle of the battlefield for all characters
+    self.edge = 100        # distance from edge of screen to escape goal
+    self.push = 100        # distance a character gets pushed by an attack
 
   def sortedEntities(self):
     '''
@@ -84,7 +116,8 @@ class Game:
 
   def draw(self):
     '''Draw all the characters'''
-    self.screen.fill(WHITE)
+    #self.screen.fill(WHITE)
+    self.screen.blit(self.background, (0,0))
     for entity in self.PCs:  entity.draw(self.screen)
     for entity in self.NPCs: entity.draw(self.screen)
     pygame.display.flip()
@@ -97,7 +130,7 @@ class Game:
       self.input()
       self.think(entity)
       self.draw()
-      pygame.time.wait(DELAY)
+      pygame.time.wait(self.delay)
 
   def fight(self):
     '''Take turns until the PCs or NPCs are defeated'''
@@ -128,21 +161,30 @@ class Game:
   def start(self):
     '''Begin the game'''
     pygame.init()
-    self.screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
+    for resolution in RESOLUTIONS:
+      if pygame.display.mode_ok(resolution, pygame.FULLSCREEN):
+        self.width, self.height = resolution
+        break
+    self.screen = pygame.display.set_mode((self.width, self.height),
+                                          pygame.FULLSCREEN)
+    self.center = 0.50 * self.width, 0.67 * self.height
+    self.background = pygame.image.load('All_Gizah_Pyramids-cropped.jpg')
+    self.background = pygame.transform.scale(self.background, (self.width, self.height))
+    self.background = self.background.convert()
     self.explore()
 
 if __name__ == "__main__":
   
   game = Game()
 
-  game.PCs.append(Entity(Warrior()))
-  game.PCs.append(Entity(Warrior()))
-  game.PCs.append(Entity(Warrior()))
+  game.PCs.append(Entity(Warrior(), game))
+  game.PCs.append(Entity(Warrior(), game))
+  game.PCs.append(Entity(Warrior(), game))
 
-  game.NPCs.append(Entity(Rogue()))
-  game.NPCs.append(Entity(Rogue()))
-  game.NPCs.append(Entity(Rogue()))
-  game.NPCs.append(Entity(Rogue()))
+  game.NPCs.append(Entity(Rogue(), game))
+  game.NPCs.append(Entity(Rogue(), game))
+  game.NPCs.append(Entity(Rogue(), game))
+  game.NPCs.append(Entity(Rogue(), game))
 
 #  game.PCs.append(Entity(Rogue()))
 #  game.PCs.append(Entity(Warrior()))
