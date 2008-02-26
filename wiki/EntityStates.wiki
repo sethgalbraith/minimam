@@ -1,14 +1,14 @@
 #labels Phase-Design
-|| *state* || *destination* || *next state* || *facing* || *animation* || *begins* ||
-|| stand still || home || this one || forward || healthy or injured || by default and after recoil, finish attack or finish healing ||
-|| lie down (incapacitated) || current position || this one || either || incapacitated || when incapacitated (after opponent's begin attack) ||
-|| recoil from attack (block/pain) || home || stand still || either || pain or block || when attacked (after opponent's begin attack) but not incapacitated ||
-|| try to escape (leaving) || home || this one || backward || healthy or injured || when the character chooses the escape option on his turn ||
-|| run away (gone) || off screen || this one || backward || healthy or injured || when the character begins a turn while trying to escape ||
-|| waiting (to make a decision) || center || this one || forward || healthy or injured || when the character begins a turn but is not incapacitated or already trying to escape ||
-|| head to attack an enemy || halfway to target || begin attack || forward || healthy or injured || when the character chooses an enemy target on his turn ||
-|| begin attack || target || finish attack || forward || attack || after head to attack ||
-|| finish attack || halfway home || stand still || forward || attack || after begin attack ||
-|| head to heal an ally || halfway to target || begin healing || backward || healthy or injured || when the character chooses an ally target on his turn ||
-|| begin healing || target || finish healing || backward || heal (attack?) || after head to heal ||
-|| finish healing || halfway home || stand still || backward || heal (attack?) || after begin healing ||
+|| *state* || *destination* || *next state* || *facing* || *animation* ||
+|| stand (default state, also after recoil, finishAttack or finishHealing) || home || this one || forward || healthy or injured ||
+|| lie (when incapacitated - at the beginning of opponent's finish attack) || current position || this one || either || incapacitated ||
+|| recoil (when attacked or healed - at the beginning of opponent's finishAttack or ally's finishHealing) || home || stand || either || pain or block ||
+|| fear (leaving - when the character chooses the escape option on his turn) || home || this one || backward || healthy or injured ||
+|| run (gone - when a character begins a turn while trying to escape) || off screen || this one || backward || healthy or injured ||
+|| wait(when the character begins a turn but is not incapacitated, trying to escape or already gone) || center || this one || forward || healthy or injured ||
+|| headToAttack (when the character chooses to attack an enemy target on his turn) || partway to target || beginAttack || forward || healthy or injured ||
+|| beginAttack (after headToAttack) || target || finishAttack || forward || attack ||
+|| finishAttack (after beginAttack) || partway home || stand || forward || attack ||
+|| headToHeal (when the character chooses an ally target on his turn) || partway to target || beginHealing || backward || healthy or injured ||
+|| beginHealing (after headToHeal) || target || finishHealing || backward || heal ||
+|| finishHealing (after beginHealing) || partway home || stand || backward || heal ||
