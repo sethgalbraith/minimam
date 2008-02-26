@@ -1,8 +1,8 @@
 #labels Phase-Design
 || *state* || *destination* || *next state* || *facing* || *animation* || *begins* ||
 || stand still || home || this one || forward || healthy or injured || by default and after recoil, finish attack or finish healing ||
-|| lie down (incapacitated) || current position || this one || forward || incapacitated || when incapacitated (after opponent's begin attack) ||
-|| recoil from attack (block/pain) || home || stand still || forward || healthy or injured || when attacked (after opponent's begin attack) but not incapacitated ||
+|| lie down (incapacitated) || current position || this one || either || incapacitated || when incapacitated (after opponent's begin attack) ||
+|| recoil from attack (block/pain) || home || stand still || either || pain or block || when attacked (after opponent's begin attack) but not incapacitated ||
 || try to escape (leaving) || home || this one || backward || healthy or injured || when the character chooses the escape option on his turn ||
 || run away (gone) || off screen || this one || backward || healthy or injured || when the character begins a turn while trying to escape ||
 || waiting (to make a decision) || center || this one || forward || healthy or injured || when the character begins a turn but is not incapacitated or already trying to escape ||
