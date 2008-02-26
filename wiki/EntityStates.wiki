@@ -1,3 +1,4 @@
+#labels Phase-Design
 || *state* || *destination* || *next state* || *facing* || *animation* || *begins* ||
 || stand still || home || this one || forward || healthy or injured || by default and after recoil, finish attack or finish healing ||
 || lie down (incapacitated) || current position || this one || forward || incapacitated || when incapacitated (after opponent's begin attack) ||
