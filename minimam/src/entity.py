@@ -19,10 +19,6 @@ import math
 import random
 from animation import Animation
 
-RIGHT = "right"  # directions are represented by strings
-LEFT  = "left"   # for compatibility with the Animation class
-X, Y  = 0, 1     # indices of X and Y axes in coordinate tuples
-
 # Store animations in a dictionary with character class names as keys
 # ("Warrior", "Rogue", "Wizard", "Priest", "Monster", "Dragon")
 # so we don't duplicate animations for characters of the same class.
@@ -42,15 +38,145 @@ class Entity:
     self.home      = game.center # position at the start of each turn
     self.exit      = game.center # a place to go when escaping
     self.position  = game.center # current position
-    self.goal      = game.center # current destination
-    self.direction = RIGHT       # normal facing direction
-    self.state     = "healthy"
-    self.target    = None
-    self.thinking  = False
+    self.backward  = False       # true for NPCs who face left by default
+    self.target    = None        # enemy being attacked or ally being healed
+    self.stand()                 # initializes state fields
 
-  def setHome(self, order, allies, NPC):
+  # STATES
+
+  def stand(self):
+    '''Begin the standing still state'''
+    self.goal = self.home
+    self.nextState = self.stand
+    if self.backward: self.direction = "left"
+    else:             self.direction = "right"
+    if self.isHealthy(): self.frame = "healthy"
+    else:                self.frame = "injured"
+    
+  def lie(self):
+    '''Begin the lying down state'''
+    self.goal = self.position
+    self.nextState = self.lie
+    self.frame = "incapacitated"
+    
+  def recoil(self, hit = False):
+    '''Begin the recoil-from-attack state'''
+    self.goal = self.home
+    self.nextThink = self.stand
+    x, y = self.position
+    if self.backward:
+        if self.isEscaping(): self.direction = "right"
+        else:                 self.direction = "left"
+        x = x + self.game.push
+    else:
+        if self.isEscaping(): self.direction = "left"
+        else:                 self.direction = "right"
+        x = x - self.game.push
+    self.position = x, y
+    if hit: self.frame == "pain"
+    else:   self.frame == "block"
+      
+  def fear(self):
+    '''Begin the trying-to-escape state'''
+    self.goal = self.home
+    self.nextState = self.fear
+    if self.backward: self.direction = "right" # notice reversed direction
+    else:             self.direction = "left"  # notice reversed direction
+    if self.isHealthy(): self.frame = "healthy"
+    else:                self.frame = "injured"
+    self.character.startEscaping()
+       
+  def run(self):
+    '''Begin the successfully-escaped state'''
+    self.goal = self.exit
+    self.nextState = self.run
+    if self.backward: self.direction = "right" # notice reversed direction
+    else:             self.direction = "left"  # notice reversed direction
+    if self.isHealthy(): self.frame = "healthy"
+    else:                self.frame = "injured"
+    self.character.finishEscaping()
+       
+  def wait(self):
+    '''Begin the waiting-for-decision state'''
+    self.goal = self.game.center
+    self.nextState = self.wait
+    if self.backward: self.direction = "left"
+    else:             self.direction = "right"
+    if self.isHealthy(): self.frame = "healthy"
+    else:                self.frame = "injured"
+    
+  def headToAttack(self):
+    '''Begin the heading-to-attack-an-enemy state'''
+    self.goal = ((0.20 * self.position[0] + 0.80 * self.target.home[0]),
+                 (0.20 * self.position[1] + 0.80 * self.target.home[1]))
+    self.nextState = self.beginAttack
+    if self.backward: self.direction = "left"
+    else:             self.direction = "right"
+    if self.isHealthy(): self.frame = "healthy"
+    else:                self.frame = "injured"
+    
+  def beginAttack(self):
+    '''Begin the starting-to-attack state'''
+    self.goal = self.target.position
+    self.nextState = self.finishAttack
+    if self.backward: self.direction = "left"
+    else:             self.direction = "right"
+    self.frame = "attack"
+    
+  def finishAttack(self):
+    '''Begin the finishing-an-attack state'''
+    self.goal = ((0.30 * self.home[0] + 0.70 * self.target.home[0]),
+                 (0.30 * self.home[1] + 0.70 * self.target.home[1]))
+    self.nextState = self.stand
+    if self.backward: self.direction = "left"
+    else:             self.direction = "right"
+    self.frame = "attack"
+    self.attackTarget()
+    
+  def headToHeal(self):
+    '''Begin the heading-to-heal-an-ally state'''
+    self.goal = ((0.25 * self.position[0] + 0.75 * self.target.home[0]),
+                 (0.25 * self.position[1] + 0.75 * self.target.home[1]))
+    self.nextState = self.beginAttack
+    if self.backward: self.direction = "right" # notice reversed direction
+    else:             self.direction = "left"  # notice reversed direction
+    if self.isHealthy(): self.frame = "healthy"
+    else:                self.frame = "injured"
+    
+  def beginHealing(self):
+    '''Begin the starting-to-heal state'''
+    self.goal = self.target.position
+    self.nextState = self.finishHealing
+    if self.backward: self.direction = "right" # notice reversed direction
+    else:             self.direction = "left"  # notice reversed direction
+    self.frame = "heal"
+    
+  def finishHealing(self):
+    '''Begin the finishing-a-healing state'''
+    self.goal = ((0.25 * self.home[0] + 0.75 * self.target.home[0]),
+                 (0.25 * self.home[1] + 0.75 * self.target.home[1]))
+    self.nextState = self.stand
+    if self.backward: self.direction = "right" # notice reversed direction
+    else:             self.direction = "left"  # notice reversed direction
+    self.frame = "heal"
+    self.healTarget()
+    
+  # EVENTS WHICH TRIGGER STATE CHNAGES
+    
+  def healTarget(self):
+    '''Heal the currently targeted ally'''
+    self.target.character.heal()
+    self.target.recoil()
+    
+  def attackTarget(self):
+    '''Try to hurt the currently targeted enemy'''
+    hit = self.character.attack(self.target.character)
+    if self.target.isIncapacitated(): self.target.lie()
+    else: self.target.recoil(hit)
+             
+  def startCombat(self, order, allies, NPC):
     '''
-    Find a home position for the entity.
+    Find a home position for the entity and set up it's initial state.
     order indicates the entity's position in his party
     (0 = first, 1 = second, 2 = third, etc.)
     allies indicates the size of the entity's party.
@@ -59,99 +185,38 @@ class Entity:
     x = math.sin(angle) * self.game.horizontal_spacing
     y = math.cos(angle) * self.game.vertical_spacing
     if NPC:
-      self.direction = LEFT
-      self.home = self.game.center[X] + x,          self.game.center[Y] - y
-      self.exit = self.game.width + self.game.edge, self.game.center[Y] - y
+      self.backward = True
+      self.home = self.game.center[0] + x,          self.game.center[1] - y
+      self.exit = self.game.width + self.game.edge, self.game.center[1] - y
     else:
-      self.direction = RIGHT
-      self.home = self.game.center[X] - x, self.game.center[Y] - y
-      self.exit = -self.game.edge,         self.game.center[Y] - y
+      self.backward = False
+      self.home = self.game.center[0] - x, self.game.center[1] - y
+      self.exit = -self.game.edge,         self.game.center[1] - y
     self.position = self.home
-    self.goal     = self.home
-    
+    self.stand()
+
   def isAtGoal(self):
     '''Find out whether the entity has reached it's goal'''
-    x = self.goal[X] - self.position[X]
-    y = self.goal[Y] - self.position[Y]
+    x = self.goal[0] - self.position[0]
+    y = self.goal[1] - self.position[1]
     return math.sqrt(x * x + y * y) <= self.game.speed
 
   def move(self):
-    if self.isIncapacitated():
-      self.state = "incapacitated"
-      return
-    x = self.goal[X] - self.position[X]
-    y = self.goal[Y] - self.position[Y]
+    '''Move toward goal and do next state on arrival'''
+    if self.isIncapacitated(): return
+    x = self.goal[0] - self.position[0]
+    y = self.goal[1] - self.position[1]
     distance = math.sqrt(x * x + y * y)
     if distance > self.game.speed:
       x = x * self.game.speed / distance
       y = y * self.game.speed / distance
-    self.position = (self.position[X] + x,
-                     self.position[Y] + y)
-    if self.isAtGoal(): self.onReachingGoal()
+    self.position = (self.position[0] + x,
+                     self.position[1] + y)
+    if self.isAtGoal(): self.nextState()
 
-  def onReachingGoal(self):
-    if self.isGone() or self.isEscaping(): return
-    if self.state == "heal":
-      self.target.character.heal()
-    elif self.state == "attack":
-      x, y = self.target.position
-      if self.direction == RIGHT: x = x + self.game.push
-      else:                       x = x - self.game.push
-      self.target.position = x, y
-      self.target.goal = self.target.home
-      hit = self.character.attack(self.target.character)
-      if hit: self.target.state == "pain"
-      else:   self.target.state == "block"
-    if self.isIncapacitated(): self.state = "incapacitated"
-    elif self.isInjured():     self.state = "injured"
-    else:                      self.state = "healthy"
-    self.goal = self.home
-             
   def startTurn(self):
-    if self.isEscaping():
-      self.character.finishEscaping()
-      self.goal = self.exit
-      self.thinking = False
-    elif not self.isGone():
-      self.goal = self.game.center
-      self.thinking = True
-      
-  def isTurnOver(self):
-    if self.state in ("incapacitated", "injured", "healthy"):
-      if self.isAtGoal() and not self.thinking: return True
-    return False
-
-  def attack(self, target):
-    '''Attack an enemy'''
-    self.target = target
-    self.state = "attack"
-    self.goal = target.home
-    self.thinking = False
-  
-  def heal(self, target):
-    '''Heal an ally'''
-    self.target = target
-    self.state = "heal"
-    self.goal = target.home
-    self.thinking = False
-    
-  def escape(self):
-    '''Try to escape'''
-    self.character.startEscaping()
-    self.goal = self.home
-    self.thinking = False
-    
-  def draw(self, screen):
-    '''Draw the entity in his current state and position'''
-    if self.character.isGone() and self.isAtGoal(): return
-    if self.state == "heal" or self.isEscaping() or self.isGone():
-      if self.direction == RIGHT: direction = LEFT
-      else:                       direction = RIGHT
-    else:                         direction = self.direction
-    frame = self.animation.getFrame(self.state, direction)
-    x, y = self.position
-    width, height = frame.get_rect().size
-    screen.blit(frame, (x - width / 2, y - height))
+    if self.isEscaping(): self.run()
+    elif not (self.isGone() or self.isIncapacitated()): self.wait()
 
   def getHealingTargets(self, allies):
     '''Get a list of all allies who are not healthy or escaping.'''
@@ -172,20 +237,40 @@ class Entity:
   def randomAction(self, allies, enemies):
     '''Escape, heal or attack a random target.'''
     if self.isInjured():
-      self.escape()
+      self.fear()
       return
     if self.isHealer():
       targets = self.getHealingTargets(allies)
       if len(targets) > 0:
-        self.heal(random.choice(targets))
+        self.target = random.choice(targets)
+        self.headToHeal()
         return
     targets = self.getAttackTargets(enemies)
     if len(targets) > 0:
-      self.attack(random.choice(targets))
+      self.target = random.choice(targets)
+      self.headToAttack()
+
+  # RENDERING      
+
+  def draw(self, screen):
+    '''Draw the entity in his current state and position'''
+    #if self.character.isGone() and self.isAtGoal(): return
+    surf = self.animation.getFrame(self.frame, self.direction)
+    x, y = self.position
+    width, height = surf.get_rect().size
+    screen.blit(surf, (x - width / 2, y - height))
+
+  # INFORMATION
+  
+  def isTurnOver(self):
+    if self.nextState in (self.stand, self.run, self.lie, self.fear):
+      if not self.isAtGoal(): return False # try commenting this out for fun
+      return True
+    return False    
 
   def isThinking(self):
     '''True if this is the entity's turn and no action has started'''
-    return self.thinking
+    return self.nextState == self.wait
 
   def isEscaping(self):
     '''True if the entity is trying to escape but can still be stopped'''

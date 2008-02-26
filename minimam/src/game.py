@@ -139,9 +139,9 @@ class Game:
     entities = self.sortedEntities()
     turn = 0
     for i in range(len(self.PCs)):
-      self.PCs[i].setHome(i, len(self.PCs), False)
+      self.PCs[i].startCombat(i, len(self.PCs), False)
     for i in range(len(self.NPCs)):
-      self.NPCs[i].setHome(i, len(self.NPCs), True)
+      self.NPCs[i].startCombat(i, len(self.NPCs), True)
     while not self.quit:
       if isDefeated(self.PCs):  return
       if isDefeated(self.NPCs): return
@@ -188,13 +188,13 @@ if __name__ == "__main__":
   game.NPCs.append(Entity(Rogue(), game))
   game.NPCs.append(Entity(Rogue(), game))
 
-#  game.PCs.append(Entity(Rogue()))
-#  game.PCs.append(Entity(Warrior()))
-#  game.PCs.append(Entity(Priest()))
-#  game.PCs.append(Entity(Wizard()))
+#  game.PCs.append(Entity(Rogue(),   game))
+#  game.PCs.append(Entity(Warrior(), game))
+#  game.PCs.append(Entity(Priest(),  game))
+#  game.PCs.append(Entity(Wizard(),  game))
 #
-#  game.NPCs.append(Entity(Monster()))
-#  game.NPCs.append(Entity(Dragon()))
-#  game.NPCs.append(Entity(Monster()))
+#  game.NPCs.append(Entity(Monster(), game))
+#  game.NPCs.append(Entity(Dragon(),  game))
+#  game.NPCs.append(Entity(Monster(), game))
 
   game.start()
