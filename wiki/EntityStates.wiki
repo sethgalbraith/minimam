@@ -6,7 +6,7 @@
 || fear (leaving - when the character chooses the escape option on his turn) || home || this one || backward || healthy or injured ||
 || run (gone - when an entity begins a turn while trying to escape) || off screen || this one || backward || healthy or injured ||
 || wait (when the entity begins a turn but is not incapacitated, leaving or gone) || center || this one || forward || healthy or injured ||
-|| headToAttack (when the character chooses to attack an enemy target on his turn) || partway to target || beginAttack || forward || healthy or injured ||
+|| headToAttack (when the character chooses to attack an enemy on his turn) || partway to target || beginAttack || forward || healthy or injured ||
 || beginAttack (after headToAttack) || target || finishAttack || forward || attack ||
 || finishAttack (after beginAttack) || partway home || stand || forward || attack ||
 || headToHeal (when the character chooses an ally target on his turn) || partway to target || beginHealing || backward || healthy or injured ||
