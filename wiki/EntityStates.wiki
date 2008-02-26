@@ -1,14 +1,14 @@
 #labels Phase-Design
 || *state* || *destination* || *next state* || *facing* || *animation* ||
-|| stand (default state, also after recoil, finishAttack or finishHealing) || home || this one || forward || healthy or injured ||
-|| lie (when incapacitated - at the beginning of enemy's finishAttack) || current position || this one || either || incapacitated ||
-|| recoil (at the beginning of enemy's finishAttack or ally's finishHealing) || home || stand || either || pain or block ||
-|| fear (leaving - when the character chooses the escape option on his turn) || home || this one || backward || healthy or injured ||
-|| run (gone - when an entity begins a turn while trying to escape) || off screen || this one || backward || healthy or injured ||
-|| wait (when the entity begins a turn but is not incapacitated, leaving or gone) || center || this one || forward || healthy or injured ||
-|| headToAttack (when the character chooses to attack an enemy on his turn) || partway to target || beginAttack || forward || healthy or injured ||
-|| beginAttack (after headToAttack) || target || finishAttack || forward || attack ||
-|| finishAttack (after beginAttack) || partway home || stand || forward || attack ||
-|| headToHeal (when the character chooses an ally target on his turn) || partway to target || beginHealing || backward || healthy or injured ||
-|| beginHealing (after headToHeal) || target || finishHealing || backward || heal ||
-|| finishHealing (after beginHealing) || partway home || stand || backward || heal ||
+|| _stand_ (default state, also after recoil, finishAttack or finishHealing) || home || this one || forward || healthy or injured ||
+|| _lie_ (when incapacitated - at the beginning of enemy's finishAttack) || current position || this one || either || incapacitated ||
+|| _recoil_ (at the beginning of enemy's finishAttack or ally's finishHealing) || home || stand || either || pain or block ||
+|| _fear_ (leaving - when the character chooses the escape option on his turn) || home || this one || backward || healthy or injured ||
+|| _run_ (gone - when an entity begins a turn while trying to escape) || off screen || this one || backward || healthy or injured ||
+|| _wait_ (when the entity begins a turn but is not incapacitated, leaving or gone) || center || this one || forward || healthy or injured ||
+|| _headToAttack_ (when the character chooses to attack an enemy on his turn) || partway to target || beginAttack || forward || healthy or injured ||
+|| _beginAttack_ (after headToAttack) || target || finishAttack || forward || attack ||
+|| _finishAttack_ (after beginAttack) || partway home || stand || forward || attack ||
+|| _headToHeal_ (when the character chooses an ally target on his turn) || partway to target || beginHealing || backward || healthy or injured ||
+|| _beginHealing_ (after headToHeal) || target || finishHealing || backward || heal ||
+|| _finishHealing_ (after beginHealing) || partway home || stand || backward || heal ||
