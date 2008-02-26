@@ -1,3 +1,4 @@
+#labels Featured
 This wiki is for the development of the graphical, turn-based computer game based on the mini mam role-playing. To discuss or contribute to the mini mam role-playing game rules themselves, please visit http://wiki.rpg.net/index.php/Mini_mam. The mini mam role-playing game rules, are loosely based on the Mano a Mano Role-Playing System which has much more detail: http://wiki.rpg.net/index.php/Mano_a_Mano.
 
 = Exploring =
