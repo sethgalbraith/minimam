@@ -28,6 +28,7 @@ import pygame
 WHITE = 255, 255, 255
 
 RESOLUTIONS = [
+  (1440, 900), # ulrich's laptop
   (1200, 900), # OLPC XO-1
   (1280, 800), # my laptop
   (800, 480),  # 7" laptop
