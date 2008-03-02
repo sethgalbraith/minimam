@@ -24,6 +24,7 @@ from dragon    import Dragon
 from entity    import Entity
 
 import pygame
+import random
 
 WHITE = 255, 255, 255
 
@@ -52,14 +53,9 @@ def alternateTurns(first, second):
   with the remaining items from the longer list at the end.
   '''
   turns = []
-  # add as many alternating pairs as possible
-  pairs = zip(first, second)
-  for pair in pairs: turns = turns + pair
-  # add the remaining unpaired items from either list
-  if len(pairs) < len(first):
-    turns = turns + first[len(pairs):]
-  if len(pairs) < len(second):
-    turns = turns + second[len(pairs):]
+  for i in range(max(len(first), len(second))):
+    if (i < len(first)):  turns.append(first[i])
+    if (i < len(second)): turns.append(second[i])
   return turns
 
 def isDefeated(entities):
@@ -154,6 +150,7 @@ class Game:
     '''Explore the map'''
     # FIXME: create the exploration part of game
     while not self.quit:
+      self.randomParty()
       self.fight()
       if   isDefeated(self.PCs):  print "NPCs won!"
       elif isDefeated(self.NPCs): print "PCs won!"
@@ -176,19 +173,30 @@ class Game:
     self.background = self.background.convert()
     self.explore()
 
-if __name__ == "__main__":
-  
-  game = Game()
-
-  game.PCs.append(Entity(Warrior(), game))
-  game.PCs.append(Entity(Warrior(), game))
-  game.PCs.append(Entity(Warrior(), game))
-
-  game.NPCs.append(Entity(Rogue(), game))
-  game.NPCs.append(Entity(Rogue(), game))
-  game.NPCs.append(Entity(Rogue(), game))
-  game.NPCs.append(Entity(Rogue(), game))
-
+  def randomParty(self):
+    #choice = random.randint(0,2)
+    choice = 1
+    if choice == 0:
+      self.PCs  = []
+      self.PCs.append(Entity(Warrior(), self))
+      self.PCs.append(Entity(Warrior(), self))
+      self.PCs.append(Entity(Warrior(), self))
+      self.NPCs = []
+      self.NPCs.append(Entity(Rogue(),  self))
+      self.NPCs.append(Entity(Rogue(),  self))
+      self.NPCs.append(Entity(Rogue(),  self))
+      self.NPCs.append(Entity(Rogue(),  self))
+    if choice == 1:
+      self.PCs  = []
+      self.PCs.append(Entity(Warrior(), self))
+      self.PCs.append(Entity(Rogue(),   self))
+      self.PCs.append(Entity(Warrior(), self))
+      self.PCs.append(Entity(Rogue(),   self))
+      self.NPCs = []
+      self.NPCs.append(Entity(Dragon(), self))
+      self.NPCs[-1].character.setLevel(1)
+      self.NPCs.append(Entity(Dragon(), self))
+      self.NPCs[-1].character.setLevel(1)
 #  game.PCs.append(Entity(Rogue(),   game))
 #  game.PCs.append(Entity(Warrior(), game))
 #  game.PCs.append(Entity(Priest(),  game))
@@ -198,4 +206,9 @@ if __name__ == "__main__":
 #  game.NPCs.append(Entity(Dragon(),  game))
 #  game.NPCs.append(Entity(Monster(), game))
 
+      
+
+if __name__ == "__main__":
+  
+  game = Game()
   game.start()
