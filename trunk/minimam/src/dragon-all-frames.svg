@@ -297,13 +297,13 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.26705673"
      inkscape:cx="1700.9959"
-     inkscape:cy="920.7502"
+     inkscape:cy="844.49465"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
-     inkscape:window-width="1440"
+     inkscape:window-width="1436"
      inkscape:window-height="850"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8" />
+     inkscape:window-x="0"
+     inkscape:window-y="14" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -321,7 +321,7 @@
      id="layer1">
     <g
        id="g8434"
-       transform="translate(820.05049,-190.97066)"
+       transform="matrix(-1,0,0,1,953.07256,-190.97066)"
        inkscape:export-filename="C:\Users\Ulrich Galbraith\Desktop\minimam\dragon-injured.png"
        inkscape:export-xdpi="35"
        inkscape:export-ydpi="35">
@@ -844,7 +844,7 @@
     </g>
     <g
        id="g8802"
-       transform="translate(48.678791,468.06534)"
+       transform="matrix(-1,0,0,1,1724.4443,468.06534)"
        inkscape:export-filename="C:\Users\Ulrich Galbraith\Desktop\minimam\dragon-healthy.png"
        inkscape:export-xdpi="35"
        inkscape:export-ydpi="35">
@@ -1276,7 +1276,8 @@
        id="g12602"
        inkscape:export-filename="C:\Users\Ulrich Galbraith\Desktop\minimam\dragon-incapacitated.png"
        inkscape:export-xdpi="35"
-       inkscape:export-ydpi="35">
+       inkscape:export-ydpi="35"
+       transform="matrix(-1,0,0,1,1773.1231,0)">
       <path
          id="path5329"
          d="M 202.77682,757.26031 C 180.15681,771.42973 179.95481,764.00996 174.82454,764.7823 C 169.69425,765.55465 154.76969,770.98148 158.18987,766.34743 C 161.61006,761.71337 147.32523,771.5403 140.6261,769.80808 C 136.36749,768.70691 111.61629,768.95005 105.57497,771.39853 C 100.02792,773.6467 71.673604,786.74545 71.673604,786.74545 C 71.673604,786.74545 104.31705,755.73131 137.25314,754.94674 C 147.22015,754.70932 153.7748,754.49108 156.06806,746.16959 C 157.13489,742.29841 178.8355,727.13895 186.53093,723.27724 C 194.22635,719.41552 209.78147,719.73945 209.78147,719.73945 C 209.78147,719.73945 193.81323,726.21723 197.70897,731.54894 C 199.7922,734.40003 213.39957,729.92928 227.08031,728.3846 C 240.76106,726.83991 320.2295,723.6846 339.04053,726.77397 C 357.85155,729.86334 386.61183,735.63472 386.61183,735.63472 C 386.61183,735.63472 360.10539,764.98373 350.69988,767.30076 C 341.29436,769.61779 269.47045,773.4795 263.48512,773.4795 C 257.4998,773.4795 202.77682,757.26031 202.77682,757.26031 z "
@@ -1662,7 +1663,7 @@
     </g>
     <g
        id="g12470"
-       transform="translate(-621.59078,760.13812)"
+       transform="matrix(-1,0,0,1,2394.7138,760.13812)"
        inkscape:export-filename="C:\Users\Ulrich Galbraith\Desktop\minimam\dragon-attack.png"
        inkscape:export-xdpi="35"
        inkscape:export-ydpi="35">
