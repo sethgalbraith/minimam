@@ -297,7 +297,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.26705673"
      inkscape:cx="1700.9959"
-     inkscape:cy="844.49465"
+     inkscape:cy="994.27556"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      inkscape:window-width="1436"
@@ -323,8 +323,8 @@
        id="g8434"
        transform="matrix(-1,0,0,1,953.07256,-190.97066)"
        inkscape:export-filename="C:\Users\Ulrich Galbraith\Desktop\minimam\dragon-injured.png"
-       inkscape:export-xdpi="35"
-       inkscape:export-ydpi="35">
+       inkscape:export-xdpi="50"
+       inkscape:export-ydpi="50">
       <path
          sodipodi:nodetypes="cssssssssscssscsssc"
          id="path4122"
@@ -846,8 +846,8 @@
        id="g8802"
        transform="matrix(-1,0,0,1,1724.4443,468.06534)"
        inkscape:export-filename="C:\Users\Ulrich Galbraith\Desktop\minimam\dragon-healthy.png"
-       inkscape:export-xdpi="35"
-       inkscape:export-ydpi="35">
+       inkscape:export-xdpi="50"
+       inkscape:export-ydpi="50">
       <path
          id="path6340"
          d="M 292.45649,50.635409 C 291.91185,35.534527 291.36721,24.208865 295.17967,18.923557 C 298.99211,13.638248 300.08137,-7.5029871 312.60799,-10.523163 C 325.1346,-13.54334 328.94705,-21.848825 328.94705,-8.2580313 C 328.94705,5.3327626 328.40242,15.903381 325.1346,24.208865 C 321.86679,32.51435 323.5007,42.329923 310.42945,46.105144 C 297.3582,49.880365 293.00113,51.390453 292.45649,50.635409 z "
@@ -1275,8 +1275,8 @@
     <g
        id="g12602"
        inkscape:export-filename="C:\Users\Ulrich Galbraith\Desktop\minimam\dragon-incapacitated.png"
-       inkscape:export-xdpi="35"
-       inkscape:export-ydpi="35"
+       inkscape:export-xdpi="50"
+       inkscape:export-ydpi="50"
        transform="matrix(-1,0,0,1,1773.1231,0)">
       <path
          id="path5329"
@@ -1665,8 +1665,8 @@
        id="g12470"
        transform="matrix(-1,0,0,1,2394.7138,760.13812)"
        inkscape:export-filename="C:\Users\Ulrich Galbraith\Desktop\minimam\dragon-attack.png"
-       inkscape:export-xdpi="35"
-       inkscape:export-ydpi="35">
+       inkscape:export-xdpi="50"
+       inkscape:export-ydpi="50">
       <rect
          y="-291.38486"
          x="1396.7025"
