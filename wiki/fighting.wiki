@@ -1,5 +1,5 @@
+#summary the combat phase of the game.
 #labels Phase-Design
-the combat phase of the game.
 
 =Fighting=
 
