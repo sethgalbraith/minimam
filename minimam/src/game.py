@@ -98,7 +98,15 @@ class Game:
       if event.type == pygame.QUIT:
         self.quit = True
       if event.type == pygame.KEYDOWN:
-        self.quit = True
+        # Escape key quits
+        if event.key == pygame.K_ESCAPE:
+          self.quit = True
+        # F11 toggles windowed and fullscreen
+        if event.key == pygame.K_F11:
+          if self.screen.get_flags() & pygame.FULLSCREEN:
+            pygame.display.set_mode((self.width, self.height))
+          else:
+            pygame.display.set_mode((self.width, self.height), pygame.FULLSCREEN)
     pygame.event.pump()
 
   def think(self, entity):
@@ -174,8 +182,8 @@ class Game:
     self.explore()
 
   def randomParty(self):
-    #choice = random.randint(0,2)
-    choice = 1
+    choice = random.randrange(2)
+    #choice = 1
     if choice == 0:
       self.PCs  = []
       self.PCs.append(Entity(Warrior(), self))
@@ -188,25 +196,16 @@ class Game:
       self.NPCs.append(Entity(Rogue(),  self))
     if choice == 1:
       self.PCs  = []
+      self.PCs.append(Entity(Rogue(),   self))
       self.PCs.append(Entity(Warrior(), self))
       self.PCs.append(Entity(Rogue(),   self))
       self.PCs.append(Entity(Warrior(), self))
       self.PCs.append(Entity(Rogue(),   self))
       self.NPCs = []
       self.NPCs.append(Entity(Dragon(), self))
-      self.NPCs[-1].character.setLevel(1)
+      #self.NPCs[-1].character.setLevel(1)
       self.NPCs.append(Entity(Dragon(), self))
-      self.NPCs[-1].character.setLevel(1)
-#  game.PCs.append(Entity(Rogue(),   game))
-#  game.PCs.append(Entity(Warrior(), game))
-#  game.PCs.append(Entity(Priest(),  game))
-#  game.PCs.append(Entity(Wizard(),  game))
-#
-#  game.NPCs.append(Entity(Monster(), game))
-#  game.NPCs.append(Entity(Dragon(),  game))
-#  game.NPCs.append(Entity(Monster(), game))
-
-      
+      #self.NPCs[-1].character.setLevel(1)
 
 if __name__ == "__main__":
   
