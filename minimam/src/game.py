@@ -29,14 +29,17 @@ import random
 WHITE = 255, 255, 255
 
 RESOLUTIONS = [
-  (1440, 900), # ulrich's laptop
-  (1200, 900), # OLPC XO-1
-  (1280, 800), # my laptop
-  (800, 480),  # 7" laptop
-  (1280, 960),
-  (1024, 768),
-  (800, 600),
-  (640,480)]
+  (1680, 1050), # WSXGA+
+  (1600, 1200), # UXGA
+  (1440, 900),  # ulrich's laptop
+  (1400, 1050), # SXGA+
+  (1280, 1024), # WXGA
+  (1280, 800),  # my laptop
+  (1200, 900),  # OLPC XO-1
+  (1024, 768),  # XGA
+  (800, 600),   # SVGA
+  (800, 480),   # WVGA (Eee PC, CloudBook)
+  (640, 480)]   # VGA
 
 def splitByClass(entities):
   '''Separate Rogues and Dragons from other characters.'''
