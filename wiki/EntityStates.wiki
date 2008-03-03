@@ -1,4 +1,5 @@
 #labels Phase-Design
+#sumary a list of states that entities can have
 || *state* || *destination* || *next state* || *facing* || *animation* ||
 || _stand_ (default state, also after recoil, finishAttack or finishHealing) || home || this one || forward || healthy or injured ||
 || _lie_ (when incapacitated - at the beginning of enemy's finishAttack) || current position || this one || either || incapacitated ||
