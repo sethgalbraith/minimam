@@ -1,5 +1,5 @@
 #summary the map-exploration phase of the game
-#labels Phase-Design
+#labels Phase-Design,Featured
 
 =Map=
 
