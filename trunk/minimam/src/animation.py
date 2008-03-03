@@ -36,7 +36,7 @@ class Animation:
 			for state in STATES:
 				try:
 					filename = "%s-%s-%s.png" % (classname, state, direction)
-					surface = pygame.image.load(filename)
+					surface = pygame.image.load(filename).convert_alpha()
 					self.frames[direction][state] = surface 
 				except pygame.error:
 					try:
@@ -44,6 +44,7 @@ class Animation:
 						surface = pygame.image.load(filename)
 						if direction == "left":
 							surface = pygame.transform.flip(surface, True, False)
+						surface = surface.convert_alpha()
 						self.frames[direction][state] = surface
 					except pygame.error:
 						pass
