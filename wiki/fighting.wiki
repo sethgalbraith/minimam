@@ -1,0 +1,6 @@
+#labels Phase-Design
+#the combat phase of the game.
+
+=Fighting=
+
+The player's characters (PCs) and their enemies are shown standing close together in a rough circle, with the PCs on the left and the enemies on the right. On each PC's turn, the player can select an enemy to attack or a character to heal, or the player can command the PC to try to escape. Until the player chooses what the PC will do, the PC moves to the center of the circle. After attacking an enemy a character returns to his original position in the circle. 
