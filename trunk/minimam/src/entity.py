@@ -76,6 +76,18 @@ class Entity:
     if hit: self.frame == "pain"
     else:   self.frame == "block"
       
+  def healSelf(self):
+    '''Begin the heal-self state'''
+    self.nextState = self.stand
+    self.frame == "injured"
+    if self.backward:
+      self.direction = "left"
+      self.goal = self.position[0] + self.game.push, self.position[1]
+    else:
+      self.direction = "right"
+      self.goal = self.position[0] - self.game.push, self.position[1]
+    self.character.heal()
+      
   def fear(self):
     '''Begin the trying-to-escape state'''
     self.goal = self.home
@@ -131,13 +143,15 @@ class Entity:
     if self.backward: self.direction = "left"
     else:             self.direction = "right"
     self.frame = "attack"
-    self.attackTarget()
-    
+    hit = self.character.attack(self.target.character)
+    if self.target.isIncapacitated(): self.target.lie()
+    else: self.target.recoil(hit)
+
   def headToHeal(self):
     '''Begin the heading-to-heal-an-ally state'''
     self.goal = ((0.25 * self.position[0] + 0.75 * self.target.home[0]),
                  (0.25 * self.position[1] + 0.75 * self.target.home[1]))
-    self.nextState = self.beginAttack
+    self.nextState = self.beginHealing
     if self.backward: self.direction = "right" # notice reversed direction
     else:             self.direction = "left"  # notice reversed direction
     if self.isHealthy(): self.frame = "healthy"
@@ -159,20 +173,10 @@ class Entity:
     if self.backward: self.direction = "right" # notice reversed direction
     else:             self.direction = "left"  # notice reversed direction
     self.frame = "heal"
-    self.healTarget()
+    self.target.character.heal()
+    self.target.stand()
     
   # EVENTS WHICH TRIGGER STATE CHNAGES
-    
-  def healTarget(self):
-    '''Heal the currently targeted ally'''
-    self.target.character.heal()
-    self.target.recoil()
-    
-  def attackTarget(self):
-    '''Try to hurt the currently targeted enemy'''
-    hit = self.character.attack(self.target.character)
-    if self.target.isIncapacitated(): self.target.lie()
-    else: self.target.recoil(hit)
              
   def startCombat(self, order, allies, NPC):
     '''
@@ -236,18 +240,16 @@ class Entity:
 
   def randomAction(self, allies, enemies):
     '''Escape, heal or attack a random target.'''
+    healing_targets = self.getHealingTargets(allies)
+    attack_targets = self.getAttackTargets(enemies)
     if self.isInjured():
-      self.fear()
-      return
-    if self.isHealer():
-      targets = self.getHealingTargets(allies)
-      if len(targets) > 0:
-        self.target = random.choice(targets)
-        self.headToHeal()
-        return
-    targets = self.getAttackTargets(enemies)
-    if len(targets) > 0:
-      self.target = random.choice(targets)
+      if self.isHealer(): self.healSelf()
+      else: self.fear()
+    elif self.isHealer() and len(healing_targets) > 0:
+      self.target = random.choice(healing_targets)
+      self.headToHeal()
+    elif len(attack_targets) > 0:
+      self.target = random.choice(attack_targets)
       self.headToAttack()
 
   # RENDERING      

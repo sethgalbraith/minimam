@@ -70,7 +70,7 @@ class Character:
     Simulate the value of rolling one six-sided die
     and adding the character's level.
     '''
-    return random.randint(1,6) + self.getLevel()
+    return random.randrange(1,7) + self.getLevel()
 
   def attackRoll(self):
     return self.roll()

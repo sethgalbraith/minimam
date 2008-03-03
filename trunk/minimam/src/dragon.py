@@ -15,16 +15,41 @@
 # You should have received a copy of the GNU General Public License
 # along with Minimam.  If not, see <http://www.gnu.org/licenses/>.
 
-from warrior import Warrior
-from rogue   import Rogue
-from wizard  import Wizard
-from priest  import Priest
+#from warrior import Warrior
+#from rogue   import Rogue
+#from wizard  import Wizard
+#from priest  import Priest
+#
+## Dragon inherits the advantages of all other classes.
+## IMPORTANT NOTE: Warrior comes after Rogue
+## because Warrior has better defenseRoll method.
+#
+#class Dragon(Rogue, Warrior, Wizard, Priest):
+#  pass
 
-# Dragon inherits the advantages of all other classes.
-# IMPORTANT NOTE: Warrior comes after Rogue
-# because Warrior has better defenseRoll method.
+from character import Character
 
-class Dragon(Rogue, Warrior, Wizard, Priest):
-  pass
+class Dragon(Character):
 
+  def hideRoll(self):
+    return self.roll() + 1
+
+  def isFirst(self):
+    return True
+
+  def attack(self, other):
+    if self.attackRoll() > other.defenseRoll():
+      other.takeFireballDamage()
+      return True
+    else:
+      return False
+
+  def attackRoll(self):
+    return self.roll() + 1
+
+  def defenseRoll(self):
+    return self.roll() + 1
+
+  def isHealer(self):
+    return True
   
