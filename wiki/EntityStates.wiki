@@ -9,6 +9,7 @@
 || _headToAttack_ (when the character chooses to attack an enemy on his turn) || partway to target || beginAttack || forward || healthy or injured ||
 || _beginAttack_ (after headToAttack) || target || finishAttack || forward || attack ||
 || _finishAttack_ (after beginAttack) || partway home || stand || forward || attack ||
+|| _healSelf_ (when the character chooses to target himself on his turn) || one step backward || stand || forward || injured ||
 || _headToHeal_ (when the character chooses an ally target on his turn) || partway to target || beginHealing || backward || healthy or injured ||
 || _beginHealing_ (after headToHeal) || target || finishHealing || backward || heal ||
 || _finishHealing_ (after beginHealing) || partway home || stand || backward || heal ||
