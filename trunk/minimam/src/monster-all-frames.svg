@@ -2087,9 +2087,9 @@
      objecttolerance="10"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.5817925"
-     inkscape:cx="1429.5911"
-     inkscape:cy="530.49505"
+     inkscape:zoom="0.29089625"
+     inkscape:cx="1391.1732"
+     inkscape:cy="511.24187"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      inkscape:window-width="1436"
@@ -2113,7 +2113,7 @@
      id="layer1">
     <g
        id="monster-healthy"
-       transform="matrix(1.0831391,0,0,1.0834241,-197.96864,5.798115)"
+       transform="matrix(-1.0831391,0,0,1.0834241,3057.1507,5.798115)"
        inkscape:label="#g13957"
        inkscape:export-xdpi="35"
        inkscape:export-ydpi="35">
@@ -2386,7 +2386,8 @@
        id="monster-attack"
        inkscape:export-xdpi="35"
        inkscape:export-ydpi="35"
-       inkscape:label="#g18328">
+       inkscape:label="#g18328"
+       transform="matrix(-1,0,0,1,2859.1821,0)">
       <path
          style="opacity:0.3;fill:#55ffdd;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
          d="M 1017.6162,380.95057 C 1015.4279,366.72306 1004.3934,241.84864 1058.0991,163.16027 C 1125.3101,64.684437 1332.8828,87.443917 1332.8828,87.443917 C 1332.8828,87.443917 1237.217,59.808344 1100.45,61.997192 C 1054.5285,62.738057 954.44847,81.147074 887.41397,165.34912 C 815.02225,256.28035 829.42479,385.32826 829.42479,396.27249 C 829.42479,407.21673 845.83683,471.78773 845.83683,471.78773 C 845.83683,471.78773 896.16703,467.41003 896.16703,463.03234 C 896.16703,458.65464 898.3553,423.63309 898.3553,423.63309 L 1017.6162,380.95057 z "
@@ -2913,7 +2914,8 @@
        id="monster-injured"
        inkscape:export-xdpi="35"
        inkscape:export-ydpi="35"
-       inkscape:label="#g18604">
+       inkscape:label="#g18604"
+       transform="matrix(-1,0,0,1,2859.1821,0)">
       <path
          sodipodi:nodetypes="ccsccsccscscscscccsscscccsccscssc"
          id="path18157"
@@ -3393,7 +3395,7 @@
     </g>
     <g
        id="monster-incapacitated"
-       transform="matrix(1.0831391,0,0,1.0834241,-1378.9633,550.65036)"
+       transform="matrix(-1.0831391,0,0,1.0834241,4238.1454,550.65036)"
        inkscape:label="#g14399"
        inkscape:export-xdpi="35"
        inkscape:export-ydpi="35">
