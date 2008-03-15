@@ -185,8 +185,8 @@ class Game:
     self.explore()
 
   def randomParty(self):
-    choice = random.randrange(2)
-    #choice = 1
+    choice = random.randrange(3)
+    choice = 2
     if choice == 0:
       self.PCs  = []
       self.PCs.append(Entity(Warrior(), self))
@@ -209,6 +209,24 @@ class Game:
       #self.NPCs[-1].character.setLevel(1)
       self.NPCs.append(Entity(Dragon(), self))
       #self.NPCs[-1].character.setLevel(1)
+    if choice == 2:
+      self.PCs  = []
+      self.PCs.append(Entity(Priest(),  self))
+      self.PCs[-1].character.setLevel(1)
+      self.PCs.append(Entity(Rogue(),   self))
+      self.PCs[-1].character.setLevel(1)
+      self.PCs.append(Entity(Warrior(), self))
+      self.PCs[-1].character.setLevel(1)
+      self.PCs.append(Entity(Wizard(),  self))
+      self.PCs[-1].character.setLevel(1)
+      self.NPCs = []
+      self.NPCs.append(Entity(Monster(), self))
+      self.NPCs.append(Entity(Monster(), self))
+      self.NPCs.append(Entity(Dragon(),  self))
+      self.NPCs[-1].character.setLevel(2)
+      self.NPCs.append(Entity(Monster(), self))
+      self.NPCs.append(Entity(Monster(), self))
+      
 
 if __name__ == "__main__":
   

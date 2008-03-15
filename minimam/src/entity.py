@@ -226,7 +226,7 @@ class Entity:
     '''Get a list of all allies who are not healthy or escaping.'''
     targets = []
     for ally in allies:
-      if not (ally.isHealthy() or ally.isEscaping()):
+      if not (ally.isHealthy() or ally.isEscaping() or ally.isGone()):
         targets.append(ally)
     return targets
 
