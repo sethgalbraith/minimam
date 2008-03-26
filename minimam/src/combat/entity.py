@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Minimam.  If not, see <http://www.gnu.org/licenses/>.
 
+import pygame
 import math
 import random
 from animation import Animation
@@ -28,19 +29,41 @@ class Entity:
 
   '''A container for characters which adds animation and movement'''
 
-  def __init__(self, character, game):
+  def __init__(self, character, order, allies, NPC, ring):
+    '''
+    order indicates the entity's position in his party
+    (0 = first, 1 = second, 2 = third, etc.)
+    allies indicates the size of the entity's party.
+    ring is a pygame Rect with the position and size of the combat circle.
+    push is the distance a character moves back when attacked.
+    speed is the distance a character moves each frame.
+    '''
     classname = character.__class__.__name__
     if classname not in animations:
         animations[classname] = Animation(classname)
     self.character = character
     self.animation = animations[classname]
-    self.game      = game
-    self.home      = game.center # position at the start of each turn
-    self.exit      = game.center # a place to go when escaping
-    self.position  = game.center # current position
-    self.backward  = False       # true for NPCs who face left by default
-    self.target    = None        # enemy being attacked or ally being healed
-    self.stand()                 # initializes state fields
+    self.center    = ring.center
+    self.speed = 10 # distance moved by characters each turn
+    self.push = 100 # distance a character gets pushed by an attack
+    self.backward  = False  # true for NPCs who face left by default
+    self.target    = None   # enemy being attacked or ally being healed
+    # find a home position for the entity and set up it's initial state.
+    width = pygame.display.get_surface().get_width()
+    margin = self.animation.getSize()[0] / 2 + 1
+    angle = math.pi * (order + 1) / (allies + 1)
+    x = math.sin(angle) * ring.width / 2
+    y = math.cos(angle) * ring.height / 2
+    if NPC:
+      self.backward = True
+      self.home = ring.centerx + x, ring.centery - y
+      self.exit = width + margin,   ring.centery - y
+    else:
+      self.backward = False
+      self.home = ring.centerx - x, ring.centery - y
+      self.exit = -margin,          ring.centery - y
+    self.position = self.home
+    self.stand()
 
   # STATES
 
@@ -67,11 +90,11 @@ class Entity:
     if self.backward:
         if self.isEscaping(): self.direction = "right"
         else:                 self.direction = "left"
-        x = x + self.game.push
+        x = x + self.push
     else:
         if self.isEscaping(): self.direction = "left"
         else:                 self.direction = "right"
-        x = x - self.game.push
+        x = x - self.push
     self.position = x, y
     if hit: self.frame == "pain"
     else:   self.frame == "block"
@@ -82,10 +105,10 @@ class Entity:
     self.frame == "injured"
     if self.backward:
       self.direction = "left"
-      self.goal = self.position[0] + self.game.push, self.position[1]
+      self.goal = self.position[0] + self.push, self.position[1]
     else:
       self.direction = "right"
-      self.goal = self.position[0] - self.game.push, self.position[1]
+      self.goal = self.position[0] - self.push, self.position[1]
     self.character.heal()
       
   def fear(self):
@@ -110,7 +133,7 @@ class Entity:
        
   def wait(self):
     '''Begin the waiting-for-decision state'''
-    self.goal = self.game.center
+    self.goal = self.center
     self.nextState = self.wait
     if self.backward: self.direction = "left"
     else:             self.direction = "right"
@@ -177,33 +200,12 @@ class Entity:
     self.target.stand()
     
   # EVENTS WHICH TRIGGER STATE CHNAGES
-             
-  def startCombat(self, order, allies, NPC):
-    '''
-    Find a home position for the entity and set up it's initial state.
-    order indicates the entity's position in his party
-    (0 = first, 1 = second, 2 = third, etc.)
-    allies indicates the size of the entity's party.
-    '''
-    angle = math.pi * (order + 1) / (allies + 1)
-    x = math.sin(angle) * self.game.horizontal_spacing
-    y = math.cos(angle) * self.game.vertical_spacing
-    if NPC:
-      self.backward = True
-      self.home = self.game.center[0] + x,          self.game.center[1] - y
-      self.exit = self.game.width + self.game.edge, self.game.center[1] - y
-    else:
-      self.backward = False
-      self.home = self.game.center[0] - x, self.game.center[1] - y
-      self.exit = -self.game.edge,         self.game.center[1] - y
-    self.position = self.home
-    self.stand()
-
+  
   def isAtGoal(self):
     '''Find out whether the entity has reached it's goal'''
     x = self.goal[0] - self.position[0]
     y = self.goal[1] - self.position[1]
-    return math.sqrt(x * x + y * y) <= self.game.speed
+    return math.sqrt(x * x + y * y) <= self.speed
 
   def move(self):
     '''Move toward goal and do next state on arrival'''
@@ -211,9 +213,9 @@ class Entity:
     x = self.goal[0] - self.position[0]
     y = self.goal[1] - self.position[1]
     distance = math.sqrt(x * x + y * y)
-    if distance > self.game.speed:
-      x = x * self.game.speed / distance
-      y = y * self.game.speed / distance
+    if distance > self.speed:
+      x = x * self.speed / distance
+      y = y * self.speed / distance
     self.position = (self.position[0] + x,
                      self.position[1] + y)
     if self.isAtGoal(): self.nextState()
