@@ -35,12 +35,12 @@ class Animation:
 		for direction in DIRECTIONS:
 			for state in STATES:
 				try:
-					filename = "%s-%s-%s.png" % (classname, state, direction)
+					filename = "graphics/%s-%s-%s.png" % (classname, state, direction)
 					surface = pygame.image.load(filename).convert_alpha()
 					self.frames[direction][state] = surface 
 				except pygame.error:
 					try:
-						filename = "%s-%s.png" % (classname, state)
+						filename = "graphics/%s-%s.png" % (classname, state)
 						surface = pygame.image.load(filename)
 						if direction == "left":
 							surface = pygame.transform.flip(surface, True, False)
@@ -59,3 +59,13 @@ class Animation:
 			if state == "pain":
 				frame = self.frames[direction]["injured"]
 		return frame
+	
+	def getSize(self):
+		'''Get the maximum width and height of any frame'''
+		width, height = 0, 0
+		for direction in self.frames.itervalues():
+			for frame in direction.itervalues():
+				if frame is not None:
+					width = max(width, frame.get_width())
+					height = max(height, frame.get_height())
+		return width, height
