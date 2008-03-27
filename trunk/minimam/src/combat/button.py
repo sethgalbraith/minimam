@@ -17,17 +17,29 @@
 
 import pygame
 
+WHITE = 255, 255, 255
+GRAY  = 64, 64, 64
+BLACK = 0, 0, 0
+CLEAR = 0, 0, 0, 0
+
+SHADOW = 1, 2
+
 class Button:
   
   '''A clickable combat option'''
   
-  def __init__(self, area):
-    self.area = pygame.Rect(area) # the clickable area
-      
+  def __init__(self, name):
+    path = "graphics/" + name
+    self.surfaces = {
+      True:  pygame.image.load("%s-selected.png" % path).convert_alpha(),
+      False: pygame.image.load("%s.png" % path).convert_alpha()
+    }
+    self.rect = self.surfaces[False].get_rect()
+
   def isMouseOver(self):
     x, y = pygame.mouse.get_pos()
-    return self.area.collidepoint(x, y)
+    return self.rect.collidepoint(x, y)
   
-    
-    
+  def draw(self, screen, selected = False):
+    screen.blit(self.surfaces[selected], self.rect)
     

@@ -60,8 +60,13 @@ class Fight:
     self.setPlayerCharacters(PCs)
     self.setNonPlayerCharacters(NPCs)
     self.quit = False
-    self.escape = Button((0, 0, 100, screen.get_height()))
+    self.escape = Button('escape')
+    rect = self.escape.rect
+    rect.bottom = screen.get_height() - 20
+    rect.left = 20
     self.selected = None
+    self.heal = pygame.image.load("graphics/heal.png").convert_alpha()
+    self.attack = pygame.image.load("graphics/attack.png").convert_alpha()
     
   def setPlayerCharacters(self, PCs):
     self.PCs = []
@@ -128,6 +133,7 @@ class Fight:
       else:                           self.selected = self.NPCs[index + 1]
  
   def selectMouse(self):
+    self.selected = None
     buttons = [self.escape] + self.NPCs + self.PCs
     buttons.reverse()
     for button in buttons:
@@ -166,17 +172,20 @@ class Fight:
     screen = pygame.display.get_surface()
     #screen.fill(WHITE)
     screen.blit(self.background.surface, (0,0))
+    if self.selected in self.PCs:
+      rect = self.heal.get_rect()
+      rect.midbottom = self.selected.position
+      rect.bottom = rect.bottom + 15
+      screen.blit(self.heal, rect)
+    elif self.selected in self.NPCs:
+      rect = self.attack.get_rect()
+      rect.midbottom = self.selected.position
+      rect.bottom = rect.bottom + 15
+      screen.blit(self.attack, rect)
     entities = self.PCs + self.NPCs
     entities.sort(lambda a, b: int(a.position[1] - b.position[1]))
     for entity in entities: entity.draw(screen)
-    if self.selected == self.escape:
-      pygame.draw.rect(screen, (0,255,0), self.escape.area, 1)
-    elif self.selected in self.PCs or self.selected in self.NPCs:
-      width, height = self.selected.animation.getSize()
-      rect = pygame.Rect(0, 0, width, height)
-      rect.centerx = self.selected.position[0]
-      rect.bottom = self.selected.position[1]
-      pygame.draw.rect(screen, (0,255,0), rect, 1)      
+    self.escape.draw(screen, self.selected == self.escape)
     pygame.display.flip()
 
   def turn(self, entity):
