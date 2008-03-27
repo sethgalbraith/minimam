@@ -17,6 +17,7 @@
 
 from entity import Entity
 from background import Background
+from button import Button
 
 import pygame
 
@@ -52,14 +53,15 @@ class Fight:
   def __init__(self, PCs = [], NPCs = []):
     self.delay = 10 # duration of animation frames in milliseconds
     screen = pygame.display.get_surface()
-    self.width, self.height = screen.get_size()
     self.ring = pygame.rect.Rect(0, 0, 600, 300) # combat circle
-    self.ring.centerx = self.width / 2
-    self.ring.bottom = self.height
+    self.ring.centerx = screen.get_width() / 2
+    self.ring.bottom = screen.get_height()
     self.background = Background('graphics/All_Gizah_Pyramids-cropped.jpg')
     self.setPlayerCharacters(PCs)
     self.setNonPlayerCharacters(NPCs)
     self.quit = False
+    self.escape = Button((0, 0, 100, screen.get_height()))
+    self.selected = None
     
   def setPlayerCharacters(self, PCs):
     self.PCs = []
@@ -82,22 +84,70 @@ class Fight:
     slow = alternateTurns(slowPCs, slowNPCs)
     return fast + slow
  
+  def toggleFullscreen(self):
+    screen = pygame.display.get_surface()
+    if screen.get_flags() & pygame.FULLSCREEN:
+      pygame.display.set_mode(screen.get_size())
+    else:
+      pygame.display.set_mode(screen.get_size(), pygame.FULLSCREEN)
+ 
+  def selectLeft(self):
+    if self.selected == None:          self.selected = self.NPCs[0]
+    elif self.selected == self.escape: self.selected = None
+    elif self.selected in self.PCs:    self.selected = self.escape
+    elif self.selected in self.NPCs:   self.selected = self.PCs[0]
+ 
+  def selectRight(self):
+    if self.selected == None:          self.selected = self.escape
+    elif self.selected == self.escape: self.selected = self.PCs[0]
+    elif self.selected in self.PCs:    self.selected = self.NPCs[0]
+    elif self.selected in self.NPCs:   self.selected = None
+      
+  def selectUp(self):
+    if self.selected == None:          self.selected = self.NPCs[-1]
+    elif self.selected == self.escape: self.selected = None
+    elif self.selected in self.PCs:
+      index = self.PCs.index(self.selected)
+      if index == 0: self.selected = self.escape
+      else:          self.selected = self.PCs[index - 1]        
+    elif self.selected in self.NPCs:
+      index = self.NPCs.index(self.selected)
+      if index == 0: self.selected = self.PCs[-1]
+      else:          self.selected = self.NPCs[index - 1]
+ 
+  def selectDown(self):
+    if self.selected == None:          self.selected = self.escape
+    elif self.selected == self.escape: self.selected = self.PCs[0]
+    elif self.selected in self.PCs:
+      index = self.PCs.index(self.selected)
+      if index == len(self.PCs) - 1: self.selected = self.NPCs[0]
+      else:                          self.selected = self.PCs[index + 1]        
+    elif self.selected in self.NPCs:
+      index = self.NPCs.index(self.selected)
+      if index == len(self.NPCs) - 1: self.selected = None
+      else:                           self.selected = self.NPCs[index + 1]
+ 
+  def selectMouse(self):
+    buttons = [self.escape] + self.NPCs + self.PCs
+    buttons.reverse()
+    for button in buttons:
+      if button.isMouseOver():
+        self.selected = button
+        break
+ 
   def input(self):
     '''Respond to user interface events'''
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
         self.quit = True
-      if event.type == pygame.KEYDOWN:
-        # Escape key quits
-        if event.key == pygame.K_ESCAPE:
-          self.quit = True
-        # F11 toggles windowed and fullscreen
-        if event.key == pygame.K_F11:
-          screen = pygame.display.get_surface()
-          if screen.get_flags() & pygame.FULLSCREEN:
-            pygame.display.set_mode(screen.get_size())
-          else:
-            pygame.display.set_mode(screen.get_size(), pygame.FULLSCREEN)
+      elif event.type == pygame.KEYDOWN:
+        if   event.key == pygame.K_ESCAPE: self.quit = True
+        elif event.key == pygame.K_F11:    self.toggleFullscreen()
+        elif event.key == pygame.K_LEFT:   self.selectLeft()
+        elif event.key == pygame.K_RIGHT:  self.selectRight()
+        elif event.key == pygame.K_UP:     self.selectUp()
+        elif event.key == pygame.K_DOWN:   self.selectDown()
+      elif event.type == pygame.MOUSEMOTION: self.selectMouse()
     pygame.event.pump()
 
   def think(self, entity):
@@ -118,7 +168,15 @@ class Fight:
     screen.blit(self.background.surface, (0,0))
     entities = self.PCs + self.NPCs
     entities.sort(lambda a, b: int(a.position[1] - b.position[1]))
-    for entity in entities:  entity.draw(screen)
+    for entity in entities: entity.draw(screen)
+    if self.selected == self.escape:
+      pygame.draw.rect(screen, (0,255,0), self.escape.area, 1)
+    elif self.selected in self.PCs or self.selected in self.NPCs:
+      width, height = self.selected.animation.getSize()
+      rect = pygame.Rect(0, 0, width, height)
+      rect.centerx = self.selected.position[0]
+      rect.bottom = self.selected.position[1]
+      pygame.draw.rect(screen, (0,255,0), rect, 1)      
     pygame.display.flip()
 
   def turn(self, entity):

@@ -65,6 +65,15 @@ class Entity:
     self.position = self.home
     self.stand()
 
+  def isMouseOver(self):
+    width, height = self.animation.getSize()
+    area = pygame.Rect(0, 0, width, height)
+    area.centerx = self.position[0]
+    area.bottom = self.position[1]
+    x, y = pygame.mouse.get_pos()
+    return area.collidepoint(x, y)
+
+
   # STATES
 
   def stand(self):

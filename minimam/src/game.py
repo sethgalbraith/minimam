@@ -93,6 +93,7 @@ class Game:
         break
     pygame.display.set_mode((self.width, self.height), pygame.FULLSCREEN)
     #pygame.display.set_mode((640, 480))
+    pygame.mouse.set_visible(True)
     self.explore()
 
 if __name__ == "__main__":
