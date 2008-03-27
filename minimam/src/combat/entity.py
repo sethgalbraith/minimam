@@ -268,7 +268,7 @@ class Entity:
     x, y = pygame.mouse.get_pos()
     if rectangle.collidepoint(x, y):
       color = surface.get_at((x - rectangle.left, y - rectangle.top))
-      if color[3] != 0: return True
+      if color[3] == 255: return True
     return False
 
   def draw(self, screen):
