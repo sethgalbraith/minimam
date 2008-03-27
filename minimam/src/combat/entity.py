@@ -260,23 +260,24 @@ class Entity:
 
   # RENDERING      
 
-  def getRect(self):
-    '''Get the entity's current image size and position.'''
-    surf = self.animation.getFrame(self.frame, self.direction)
-    rect = surf.get_rect()
-    rect.midbottom = self.position
-    return rect
-
   def isMouseOver(self):
     '''Return True if the mouse is currently hovering over the entity.'''
+    surface = self.animation.getFrame(self.frame, self.direction)
+    rectangle = surface.get_rect()
+    rectangle.midbottom = self.position
     x, y = pygame.mouse.get_pos()
-    return self.getRect().collidepoint(x, y)
+    if rectangle.collidepoint(x, y):
+      color = surface.get_at((x - rectangle.left, y - rectangle.top))
+      if color[3] != 0: return True
+    return False
 
   def draw(self, screen):
     '''Draw the entity in his current state and position'''
     if self.character.isGone() and self.isAtGoal(): return
     surface = self.animation.getFrame(self.frame, self.direction)
-    screen.blit(surface, self.getRect())
+    rectangle = surface.get_rect()
+    rectangle.midbottom = self.position
+    screen.blit(surface, rectangle)
 
   # INFORMATION
   

@@ -97,18 +97,21 @@ class Fight:
       pygame.display.set_mode(screen.get_size(), pygame.FULLSCREEN)
  
   def selectLeft(self):
+    '''Select the previous party or option.'''
     if self.selected == None:          self.selected = self.NPCs[0]
     elif self.selected == self.escape: self.selected = None
     elif self.selected in self.PCs:    self.selected = self.escape
     elif self.selected in self.NPCs:   self.selected = self.PCs[0]
  
   def selectRight(self):
+    '''Select the next party or option.'''
     if self.selected == None:          self.selected = self.escape
     elif self.selected == self.escape: self.selected = self.PCs[0]
     elif self.selected in self.PCs:    self.selected = self.NPCs[0]
     elif self.selected in self.NPCs:   self.selected = None
       
   def selectUp(self):
+    '''Select the previous character in the party or the previous party.'''
     if self.selected == None:          self.selected = self.NPCs[-1]
     elif self.selected == self.escape: self.selected = None
     elif self.selected in self.PCs:
@@ -121,6 +124,7 @@ class Fight:
       else:          self.selected = self.NPCs[index - 1]
  
   def selectDown(self):
+    '''Select the next character in the party or the next party.'''
     if self.selected == None:          self.selected = self.escape
     elif self.selected == self.escape: self.selected = self.PCs[0]
     elif self.selected in self.PCs:
@@ -133,7 +137,8 @@ class Fight:
       else:                           self.selected = self.NPCs[index + 1]
  
   def selectMouse(self):
-    self.selected = None
+    '''Select the nearest character under the mouse pointer.'''
+    #self.selected = None
     buttons = [self.escape] + self.NPCs + self.PCs
     buttons.reverse()
     for button in buttons:
@@ -141,7 +146,25 @@ class Fight:
         self.selected = button
         break
  
-  def input(self):
+  def chooseAction(self, entity):
+    '''Escape, heal or attack the selected target.'''
+    if not entity.isThinking(): return
+    elif entity in self.NPCs: return
+    elif self.selected == self.escape: entity.fear()
+    elif self.selected in self.PCs:
+      if entity.isHealer() and self.selected.isInjured():
+        if self.selected == entity:
+          entity.healSelf()
+        else:
+          entity.target = self.selected
+          entity.headToHeal()
+    elif self.selected in self.NPCs:
+      if not(self.selected.isGone() or self.selected.isIncapacitated()):
+        entity.target = self.selected
+        entity.headToAttack()
+
+ 
+  def input(self, entity):
     '''Respond to user interface events'''
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
@@ -153,17 +176,16 @@ class Fight:
         elif event.key == pygame.K_RIGHT:  self.selectRight()
         elif event.key == pygame.K_UP:     self.selectUp()
         elif event.key == pygame.K_DOWN:   self.selectDown()
+        elif event.key == pygame.K_RETURN: self.chooseAction(entity)
       elif event.type == pygame.MOUSEMOTION: self.selectMouse()
+      elif event.type == pygame.MOUSEBUTTONDOWN: self.chooseAction(entity)
     pygame.event.pump()
 
   def think(self, entity):
     '''Entities move and make decisions'''
     if entity.isThinking():
-      if entity in self.PCs:
-          allies, enemies = self.PCs, self.NPCs
-      else:
-          allies, enemies = self.NPCs, self.PCs
-      entity.randomAction(allies, enemies)
+      if entity in self.NPCs: entity.randomAction(self.NPCs, self.PCs)
+      #else:                   entity.randomAction(self.PCs, self.NPCs)
     for other_entity in self.PCs:  other_entity.move()
     for other_entity in self.NPCs: other_entity.move()
 
@@ -193,7 +215,7 @@ class Fight:
     if entity.isIncapacitated() or entity.isGone(): return
     entity.startTurn()
     while not (self.quit or entity.isTurnOver()):
-      self.input()
+      self.input(entity)
       self.think(entity)
       self.draw()
       pygame.time.wait(self.delay)
