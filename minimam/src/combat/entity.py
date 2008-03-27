@@ -20,6 +20,10 @@ import math
 import random
 from animation import Animation
 
+WHITE = 255, 255, 255
+GRAY  = 64, 64, 64
+BLACK = 0, 0, 0
+
 # Store animations in a dictionary with character class names as keys
 # ("Warrior", "Rogue", "Wizard", "Priest", "Monster", "Dragon")
 # so we don't duplicate animations for characters of the same class.
@@ -65,15 +69,6 @@ class Entity:
     self.position = self.home
     self.stand()
 
-  def isMouseOver(self):
-    width, height = self.animation.getSize()
-    area = pygame.Rect(0, 0, width, height)
-    area.centerx = self.position[0]
-    area.bottom = self.position[1]
-    x, y = pygame.mouse.get_pos()
-    return area.collidepoint(x, y)
-
-
   # STATES
 
   def stand(self):
@@ -107,7 +102,7 @@ class Entity:
     self.position = x, y
     if hit: self.frame == "pain"
     else:   self.frame == "block"
-      
+
   def healSelf(self):
     '''Begin the heal-self state'''
     self.nextState = self.stand
@@ -265,13 +260,23 @@ class Entity:
 
   # RENDERING      
 
+  def getRect(self):
+    '''Get the entity's current image size and position.'''
+    surf = self.animation.getFrame(self.frame, self.direction)
+    rect = surf.get_rect()
+    rect.midbottom = self.position
+    return rect
+
+  def isMouseOver(self):
+    '''Return True if the mouse is currently hovering over the entity.'''
+    x, y = pygame.mouse.get_pos()
+    return self.getRect().collidepoint(x, y)
+
   def draw(self, screen):
     '''Draw the entity in his current state and position'''
-    #if self.character.isGone() and self.isAtGoal(): return
-    surf = self.animation.getFrame(self.frame, self.direction)
-    x, y = self.position
-    width, height = surf.get_rect().size
-    screen.blit(surf, (x - width / 2, y - height))
+    if self.character.isGone() and self.isAtGoal(): return
+    surface = self.animation.getFrame(self.frame, self.direction)
+    screen.blit(surface, self.getRect())
 
   # INFORMATION
   
