@@ -64,7 +64,6 @@ class Fight:
     rect = self.escape.rect
     rect.bottom = screen.get_height() - 20
     rect.left = 20
-    self.selected = None
     self.heal = pygame.image.load("graphics/heal.png").convert_alpha()
     self.attack = pygame.image.load("graphics/attack.png").convert_alpha()
     
@@ -98,73 +97,80 @@ class Fight:
  
   def selectLeft(self):
     '''Select the previous party or option.'''
-    if self.selected == None:          self.selected = self.NPCs[0]
-    elif self.selected == self.escape: self.selected = None
-    elif self.selected in self.PCs:    self.selected = self.escape
-    elif self.selected in self.NPCs:   self.selected = self.PCs[0]
+    if not self.entity.isThinking(): return
+    elif self.entity in self.NPCs: return
+    elif self.entity.target == None:        self.entity.target = self.NPCs[0]
+    elif self.entity.target == self.escape: self.entity.target = None
+    elif self.entity.target in self.PCs:    self.entity.target = self.escape
+    elif self.entity.target in self.NPCs:   self.entity.target = self.PCs[0]
  
   def selectRight(self):
     '''Select the next party or option.'''
-    if self.selected == None:          self.selected = self.escape
-    elif self.selected == self.escape: self.selected = self.PCs[0]
-    elif self.selected in self.PCs:    self.selected = self.NPCs[0]
-    elif self.selected in self.NPCs:   self.selected = None
+    if not self.entity.isThinking(): return
+    elif self.entity in self.NPCs: return
+    elif self.entity.target == None:        self.entity.target = self.escape
+    elif self.entity.target == self.escape: self.entity.target = self.PCs[0]
+    elif self.entity.target in self.PCs:    self.entity.target = self.NPCs[0]
+    elif self.entity.target in self.NPCs:   self.entity.target = None
       
   def selectUp(self):
     '''Select the previous character in the party or the previous party.'''
-    if self.selected == None:          self.selected = self.NPCs[-1]
-    elif self.selected == self.escape: self.selected = None
-    elif self.selected in self.PCs:
-      index = self.PCs.index(self.selected)
-      if index == 0: self.selected = self.escape
-      else:          self.selected = self.PCs[index - 1]        
-    elif self.selected in self.NPCs:
-      index = self.NPCs.index(self.selected)
-      if index == 0: self.selected = self.PCs[-1]
-      else:          self.selected = self.NPCs[index - 1]
+    if not self.entity.isThinking(): return
+    elif self.entity in self.NPCs: return
+    elif self.entity.target == None:        self.entity.target = self.NPCs[-1]
+    elif self.entity.target == self.escape: self.entity.target = None
+    elif self.entity.target in self.PCs:
+      index = self.PCs.index(self.entity.target)
+      if index == 0: self.entity.target = self.escape
+      else:          self.entity.target = self.PCs[index - 1]        
+    elif self.entity.target in self.NPCs:
+      index = self.NPCs.index(self.entity.target)
+      if index == 0: self.entity.target = self.PCs[-1]
+      else:          self.entity.target = self.NPCs[index - 1]
  
   def selectDown(self):
     '''Select the next character in the party or the next party.'''
-    if self.selected == None:          self.selected = self.escape
-    elif self.selected == self.escape: self.selected = self.PCs[0]
-    elif self.selected in self.PCs:
-      index = self.PCs.index(self.selected)
-      if index == len(self.PCs) - 1: self.selected = self.NPCs[0]
-      else:                          self.selected = self.PCs[index + 1]        
-    elif self.selected in self.NPCs:
-      index = self.NPCs.index(self.selected)
-      if index == len(self.NPCs) - 1: self.selected = None
-      else:                           self.selected = self.NPCs[index + 1]
+    if not self.entity.isThinking(): return
+    elif self.entity in self.NPCs: return
+    elif self.entity.target == None:        self.entity.target = self.escape
+    elif self.entity.target == self.escape: self.entity.target = self.PCs[0]
+    elif self.entity.target in self.PCs:
+      index = self.PCs.index(self.entity.target)
+      if index == len(self.PCs) - 1: self.entity.target = self.NPCs[0]
+      else:                          self.entity.target = self.PCs[index + 1]        
+    elif self.entity.target in self.NPCs:
+      index = self.NPCs.index(self.entity.target)
+      if index == len(self.NPCs) - 1: self.entity.target = None
+      else:                           self.entity.target = self.NPCs[index + 1]
  
   def selectMouse(self):
     '''Select the nearest character under the mouse pointer.'''
-    #self.selected = None
+    if not self.entity.isThinking(): return
+    elif self.entity in self.NPCs: return
+    #entity.target = None
     buttons = [self.escape] + self.NPCs + self.PCs
     buttons.reverse()
     for button in buttons:
       if button.isMouseOver():
-        self.selected = button
+        self.entity.target = button
         break
  
-  def chooseAction(self, entity):
+  def chooseAction(self):
     '''Escape, heal or attack the selected target.'''
-    if not entity.isThinking(): return
-    elif entity in self.NPCs: return
-    elif self.selected == self.escape: entity.fear()
-    elif self.selected in self.PCs:
-      if entity.isHealer() and self.selected.isInjured():
-        if self.selected == entity:
-          entity.healSelf()
-        else:
-          entity.target = self.selected
-          entity.headToHeal()
-    elif self.selected in self.NPCs:
-      if not(self.selected.isGone() or self.selected.isIncapacitated()):
-        entity.target = self.selected
-        entity.headToAttack()
+    if not self.entity.isThinking(): return
+    elif self.entity in self.NPCs: return
+    elif self.entity.target == self.escape: self.entity.fear()
+    elif self.entity.target in self.PCs:
+      if self.entity.isHealer() and self.entity.target.isInjured():
+        if self.entity.target == self.entity: self.entity.healSelf()
+        else:                                 self.entity.headToHeal()
+    elif self.entity.target in self.NPCs:
+      if not self.entity.target.isGone():
+        if not self.entity.target.isIncapacitated():
+          self.entity.headToAttack()
 
  
-  def input(self, entity):
+  def input(self):
     '''Respond to user interface events'''
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
@@ -176,47 +182,55 @@ class Fight:
         elif event.key == pygame.K_RIGHT:  self.selectRight()
         elif event.key == pygame.K_UP:     self.selectUp()
         elif event.key == pygame.K_DOWN:   self.selectDown()
-        elif event.key == pygame.K_RETURN: self.chooseAction(entity)
+        elif event.key == pygame.K_RETURN: self.chooseAction()
       elif event.type == pygame.MOUSEMOTION: self.selectMouse()
-      elif event.type == pygame.MOUSEBUTTONDOWN: self.chooseAction(entity)
+      elif event.type == pygame.MOUSEBUTTONDOWN:
+        self.selectMouse()
+        self.chooseAction()
     pygame.event.pump()
 
-  def think(self, entity):
+  def think(self):
     '''Entities move and make decisions'''
-    if entity.isThinking():
-      if entity in self.NPCs: entity.randomAction(self.NPCs, self.PCs)
-      #else:                   entity.randomAction(self.PCs, self.NPCs)
-    for other_entity in self.PCs:  other_entity.move()
-    for other_entity in self.NPCs: other_entity.move()
+    if self.entity.isThinking() and self.entity in self.NPCs:
+      self.entity.randomAction(self.NPCs, self.PCs)
+    for entity in self.PCs:  entity.move()
+    for entity in self.NPCs: entity.move()
 
-  def draw(self):
-    '''Draw all the characters'''
-    screen = pygame.display.get_surface()
-    #screen.fill(WHITE)
-    screen.blit(self.background.surface, (0,0))
-    if self.selected in self.PCs:
-      rect = self.heal.get_rect()
-      rect.midbottom = self.selected.position
-      rect.bottom = rect.bottom + 15
-      screen.blit(self.heal, rect)
-    elif self.selected in self.NPCs:
-      rect = self.attack.get_rect()
-      rect.midbottom = self.selected.position
-      rect.bottom = rect.bottom + 15
-      screen.blit(self.attack, rect)
+  def drawSelector(self):
+    '''Draw a selector under the target if it is a PC or NPC'''
+    if self.entity.target == None: return
+    if self.entity.target == self.escape: return
+    entity_team = self.entity in self.PCs
+    target_team = self.entity.target in self.PCs
+    if not (entity_team or target_team): selector = self.heal
+    elif entity_team and target_team:    selector = self.heal
+    else:                                selector = self.attack
+    rectangle = selector.get_rect()
+    rectangle.midbottom = self.entity.target.position
+    rectangle.bottom = rectangle.bottom + 15
+    pygame.display.get_surface().blit(selector, rectangle)
+
+  def drawEntities(self):
+    '''Draw the entities representing each character'''
     entities = self.PCs + self.NPCs
     entities.sort(lambda a, b: int(a.position[1] - b.position[1]))
-    for entity in entities: entity.draw(screen)
-    self.escape.draw(screen, self.selected == self.escape)
+    for entity in entities: entity.draw()
+
+  def draw(self):
+    '''Draw the fight scene'''
+    self.background.draw()
+    self.drawSelector()
+    self.drawEntities()
+    self.escape.draw(self.entity.target == self.escape)
     pygame.display.flip()
 
-  def turn(self, entity):
+  def turn(self):
     '''One character's turn'''
-    if entity.isIncapacitated() or entity.isGone(): return
-    entity.startTurn()
-    while not (self.quit or entity.isTurnOver()):
-      self.input(entity)
-      self.think(entity)
+    if self.entity.isIncapacitated() or self.entity.isGone(): return
+    self.entity.startTurn()
+    while not (self.quit or self.entity.isTurnOver()):
+      self.input()
+      self.think()
       self.draw()
       pygame.time.wait(self.delay)
 
@@ -227,9 +241,60 @@ class Fight:
     while not self.quit:
       if isDefeated(self.PCs):  return
       if isDefeated(self.NPCs): return
-      self.turn(entities[turn])
+      self.entity = entities[turn]
+      self.turn()
       turn = turn + 1
       if turn == len(entities): turn = 0
 
-      
+# self test
+
+if __name__ == "__main__":
   
+  from character.warrior import Warrior
+  from character.rogue   import Rogue
+  from character.wizard  import Wizard
+  from character.priest  import Priest
+  from character.monster import Monster
+  from character.dragon  import Dragon
+  
+  import random
+
+  RESOLUTIONS = [
+    (1680, 1050), # WSXGA+
+    (1600, 1200), # UXGA
+    (1440, 900),  # ulrich's laptop
+    (1400, 1050), # SXGA+
+    (1280, 1024), # WXGA
+    (1280, 800),  # my laptop
+    (1200, 900),  # OLPC XO-1
+    (1024, 768),  # XGA
+    (800, 600),   # SVGA
+    (800, 480),   # WVGA (Eee PC, CloudBook)
+    (640, 480)]   # VGA
+  
+  pygame.init()
+  for resolution in RESOLUTIONS:
+    if pygame.display.mode_ok(resolution, pygame.FULLSCREEN):
+      pygame.display.set_mode(resolution, pygame.FULLSCREEN)
+      break
+  pygame.mouse.set_visible(True)
+
+  import os; os.chdir('..') # so you can find the graphics
+  
+  fight = Fight()
+  while not fight.quit:
+    choice = random.randrange(3)
+    if choice == 0:
+      PCs = [Warrior(), Warrior(), Warrior()]
+      NPCs = [Rogue(), Rogue(), Rogue(), Rogue()]
+    if choice == 1:
+      PCs = [Rogue(), Warrior(), Rogue(), Warrior(), Rogue()]
+      NPCs = [Dragon(), Dragon()]
+    if choice == 2:
+      PCs = [Priest(), Rogue(), Warrior(), Wizard()]
+      for character in PCs: character.setLevel(1)
+      NPCs = [Monster(), Monster(), Dragon(), Monster(), Monster()]
+      NPCs[2].setLevel(2)
+    fight.setPlayerCharacters(PCs)
+    fight.setNonPlayerCharacters(NPCs)
+    fight.loop()

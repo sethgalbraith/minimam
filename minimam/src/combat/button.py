@@ -40,6 +40,6 @@ class Button:
     x, y = pygame.mouse.get_pos()
     return self.rect.collidepoint(x, y)
   
-  def draw(self, screen, selected = False):
-    screen.blit(self.surfaces[selected], self.rect)
+  def draw(self, selected = False):
+    pygame.display.get_surface().blit(self.surfaces[selected], self.rect)
     
