@@ -94,7 +94,7 @@ class Entity:
   def recoil(self, hit = False):
     '''Begin the recoil-from-attack state'''
     self.goal = self.home
-    self.nextThink = self.stand
+    self.nextState = self.stand
     x, y = self.position
     if self.backward:
         if self.isEscaping(): self.direction = "right"
