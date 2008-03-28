@@ -24,6 +24,11 @@ WHITE = 255, 255, 255
 GRAY  = 64, 64, 64
 BLACK = 0, 0, 0
 
+SLOW = 10
+FAST = 15
+
+PUSH = 100
+
 # Store animations in a dictionary with character class names as keys
 # ("Warrior", "Rogue", "Wizard", "Priest", "Monster", "Dragon")
 # so we don't duplicate animations for characters of the same class.
@@ -48,8 +53,8 @@ class Entity:
     self.character = character
     self.animation = animations[classname]
     self.center    = ring.center
-    self.speed = 10 # distance moved by characters each turn
-    self.push = 100 # distance a character gets pushed by an attack
+    self.speed     = SLOW # distance moved by characters each turn
+    self.push      = PUSH # distance a character gets pushed by an attack
     self.backward  = False  # true for NPCs who face left by default
     self.target    = None   # enemy being attacked or ally being healed
     # find a home position for the entity and set up it's initial state.
@@ -146,8 +151,8 @@ class Entity:
     
   def headToAttack(self):
     '''Begin the heading-to-attack-an-enemy state'''
-    self.goal = ((0.20 * self.position[0] + 0.80 * self.target.home[0]),
-                 (0.20 * self.position[1] + 0.80 * self.target.home[1]))
+    self.goal = ((0.30 * self.position[0] + 0.70 * self.target.home[0]),
+                 (0.30 * self.position[1] + 0.70 * self.target.home[1]))
     self.nextState = self.beginAttack
     if self.backward: self.direction = "left"
     else:             self.direction = "right"
@@ -161,6 +166,7 @@ class Entity:
     if self.backward: self.direction = "left"
     else:             self.direction = "right"
     self.frame = "attack"
+    self.speed = FAST
     
   def finishAttack(self):
     '''Begin the finishing-an-attack state'''
@@ -173,11 +179,12 @@ class Entity:
     hit = self.character.attack(self.target.character)
     if self.target.isIncapacitated(): self.target.lie()
     else: self.target.recoil(hit)
+    self.speed = SLOW
 
   def headToHeal(self):
     '''Begin the heading-to-heal-an-ally state'''
-    self.goal = ((0.25 * self.position[0] + 0.75 * self.target.home[0]),
-                 (0.25 * self.position[1] + 0.75 * self.target.home[1]))
+    self.goal = ((0.30 * self.position[0] + 0.70 * self.target.home[0]),
+                 (0.30 * self.position[1] + 0.70 * self.target.home[1]))
     self.nextState = self.beginHealing
     if self.backward: self.direction = "right" # notice reversed direction
     else:             self.direction = "left"  # notice reversed direction
@@ -194,8 +201,8 @@ class Entity:
     
   def finishHealing(self):
     '''Begin the finishing-a-healing state'''
-    self.goal = ((0.25 * self.home[0] + 0.75 * self.target.home[0]),
-                 (0.25 * self.home[1] + 0.75 * self.target.home[1]))
+    self.goal = ((0.30 * self.home[0] + 0.70 * self.target.home[0]),
+                 (0.30 * self.home[1] + 0.70 * self.target.home[1]))
     self.nextState = self.stand
     if self.backward: self.direction = "right" # notice reversed direction
     else:             self.direction = "left"  # notice reversed direction
@@ -271,13 +278,13 @@ class Entity:
       if color[3] == 255: return True
     return False
 
-  def draw(self, screen):
+  def draw(self):
     '''Draw the entity in his current state and position'''
     if self.character.isGone() and self.isAtGoal(): return
     surface = self.animation.getFrame(self.frame, self.direction)
     rectangle = surface.get_rect()
     rectangle.midbottom = self.position
-    screen.blit(surface, rectangle)
+    pygame.display.get_surface().blit(surface, rectangle)
 
   # INFORMATION
   
