@@ -3,7 +3,7 @@
 || *state* || *destination* || *next state* || *facing* || *animation* ||
 || _stand_ (default state, also after hit, defend, finishAttack or finishHealing, or being healed) || home || stand || forward || healthy or injured ||
 || _lie_ (when incapacitated - at the beginning of enemy's finishAttack) || current position || lie || either || incapacitated ||
-|| _hit_ (at the beginning of enemy's finishAttack) || home || stand or fear || either || pain ||
+|| _hit_ (at the beginning of enemy's finishAttack) || home || stand || forward || pain ||
 || _defend_ (at the beginning of enemy's finishAttack) || home || stand or fear || either || block ||
 || _fear_ (leaving - when the character chooses escape, after defend or being healed while fleeing) || home || fear || backward || healthy or injured ||
 || _run_ (gone - when an entity begins a turn while trying to escape) || off screen || run || backward || healthy or injured ||
