@@ -1,10 +1,11 @@
 #summary a list of states that entities can have
 #labels Phase-Design
 || *state* || *destination* || *next state* || *facing* || *animation* ||
-|| _stand_ (default state, also after recoil, finishAttack or finishHealing) || home || this one || forward || healthy or injured ||
+|| _stand_ (default state, also after hit, defend, finishAttack or finishHealing, or being healed) || home || this one || forward || healthy or injured ||
 || _lie_ (when incapacitated - at the beginning of enemy's finishAttack) || current position || this one || either || incapacitated ||
-|| _recoil_ (at the beginning of enemy's finishAttack or ally's finishHealing) || home || stand || either || pain or block ||
-|| _fear_ (leaving - when the character chooses the escape option on his turn) || home || this one || backward || healthy or injured ||
+|| _hit_ (at the beginning of enemy's finishAttack) || home || stand or fear || either || pain ||
+|| _defend_ (at the beginning of enemy's finishAttack) || home || stand or fear || either || block ||
+|| _fear_ (leaving - when the character chooses the escape option on his turn, also after defend or being healed while fleeing) || home || this one || backward || healthy or injured ||
 || _run_ (gone - when an entity begins a turn while trying to escape) || off screen || this one || backward || healthy or injured ||
 || _wait_ (when the entity begins a turn but is not incapacitated, leaving or gone) || center || this one || forward || healthy or injured ||
 || _headToAttack_ (when the character chooses to attack an enemy on his turn) || partway to target || beginAttack || forward || healthy or injured ||
