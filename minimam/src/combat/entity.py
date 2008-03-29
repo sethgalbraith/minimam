@@ -27,7 +27,8 @@ BLACK = 0, 0, 0
 SLOW = 10
 FAST = 15
 
-PUSH = 100
+RECOIL = 100
+SIDESTEP = 50
 
 # Store animations in a dictionary with character class names as keys
 # ("Warrior", "Rogue", "Wizard", "Priest", "Monster", "Dragon")
@@ -54,7 +55,6 @@ class Entity:
     self.animation = animations[classname]
     self.center    = ring.center
     self.speed     = SLOW # distance moved by characters each turn
-    self.push      = PUSH # distance a character gets pushed by an attack
     self.backward  = False  # true for NPCs who face left by default
     self.target    = None   # enemy being attacked or ally being healed
     # find a home position for the entity and set up it's initial state.
@@ -91,22 +91,33 @@ class Entity:
     self.nextState = self.lie
     self.frame = "incapacitated"
     
-  def recoil(self, hit = False):
+  def pain(self):
     '''Begin the recoil-from-attack state'''
     self.goal = self.home
     self.nextState = self.stand
-    x, y = self.position
     if self.backward:
         if self.isEscaping(): self.direction = "right"
         else:                 self.direction = "left"
-        x = x + self.push
+        self.position = self.position[0] + RECOIL, self.position[1]
     else:
         if self.isEscaping(): self.direction = "left"
         else:                 self.direction = "right"
-        x = x - self.push
-    self.position = x, y
-    if hit: self.frame == "pain"
-    else:   self.frame == "block"
+        self.position = self.position[0] - RECOIL, self.position[1]
+    self.frame == "pain"
+
+  def block(self):
+    '''Begin the recoil-from-attack state'''
+    self.goal = self.home
+    if self.isEscaping(): self.nextState = self.fear
+    else:                 self.nextState = self.stand
+    if self.backward:
+        if self.isEscaping(): self.direction = "right"
+        else:                 self.direction = "left"
+    else:
+        if self.isEscaping(): self.direction = "left"
+        else:                 self.direction = "right"
+    self.position = self.position[0], self.position[1] + SIDESTEP
+    self.frame == "block"
 
   def healSelf(self):
     '''Begin the heal-self state'''
@@ -114,10 +125,10 @@ class Entity:
     self.frame == "injured"
     if self.backward:
       self.direction = "left"
-      self.goal = self.position[0] + self.push, self.position[1]
+      self.goal = self.position[0] + RECOIL, self.position[1]
     else:
       self.direction = "right"
-      self.goal = self.position[0] - self.push, self.position[1]
+      self.goal = self.position[0] - RECOIL, self.position[1]
     self.character.heal()
       
   def fear(self):
@@ -178,7 +189,8 @@ class Entity:
     self.frame = "attack"
     hit = self.character.attack(self.target.character)
     if self.target.isIncapacitated(): self.target.lie()
-    else: self.target.recoil(hit)
+    elif hit:                         self.target.pain()
+    else:                             self.target.block()
     self.speed = SLOW
 
   def headToHeal(self):
@@ -208,7 +220,8 @@ class Entity:
     else:             self.direction = "left"  # notice reversed direction
     self.frame = "heal"
     self.target.character.heal()
-    self.target.stand()
+    if self.target.isEscaping(): self.target.fear()
+    else:                        self.target.stand()
     
   # EVENTS WHICH TRIGGER STATE CHNAGES
   
