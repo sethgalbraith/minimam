@@ -5,7 +5,7 @@
 || _lie_ (when incapacitated - at the beginning of enemy's finishAttack) || current position || this one || either || incapacitated ||
 || _hit_ (at the beginning of enemy's finishAttack) || home || stand or fear || either || pain ||
 || _defend_ (at the beginning of enemy's finishAttack) || home || stand or fear || either || block ||
-|| _fear_ (leaving - when the character chooses the escape option on his turn, also after defend or being healed while fleeing) || home || this one || backward || healthy or injured ||
+|| _fear_ (leaving - when the character chooses escape, after defend or being healed while fleeing) || home || this one || backward || healthy or injured ||
 || _run_ (gone - when an entity begins a turn while trying to escape) || off screen || this one || backward || healthy or injured ||
 || _wait_ (when the entity begins a turn but is not incapacitated, leaving or gone) || center || this one || forward || healthy or injured ||
 || _headToAttack_ (when the character chooses to attack an enemy on his turn) || partway to target || beginAttack || forward || healthy or injured ||
