@@ -160,8 +160,8 @@ class Fight:
     if not self.entity.isThinking(): return
     elif self.entity in self.NPCs: return
     elif self.entity.target == self.escape: self.entity.fear()
-    elif self.entity.target in self.PCs:
-      if self.entity.isHealer() and self.entity.target.isInjured():
+    elif self.entity.target in self.PCs and self.entity.isHealer():
+      if self.entity.target.isInjured() or self.entity.target.isIncapacitated():
         if self.entity.target == self.entity: self.entity.healSelf()
         else:                                 self.entity.headToHeal()
     elif self.entity.target in self.NPCs:
