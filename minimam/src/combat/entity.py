@@ -91,8 +91,8 @@ class Entity:
     self.nextState = self.lie
     self.frame = "incapacitated"
     
-  def pain(self):
-    '''Begin the recoil-from-attack state'''
+  def hit(self):
+    '''Begin the recoil-from-successful-attack state'''
     self.goal = self.home
     self.nextState = self.stand
     if self.backward:
@@ -105,8 +105,8 @@ class Entity:
         self.position = self.position[0] - RECOIL, self.position[1]
     self.frame == "pain"
 
-  def block(self):
-    '''Begin the recoil-from-attack state'''
+  def defend(self):
+    '''Begin the avoided-attack state'''
     self.goal = self.home
     if self.isEscaping(): self.nextState = self.fear
     else:                 self.nextState = self.stand
@@ -187,10 +187,10 @@ class Entity:
     if self.backward: self.direction = "left"
     else:             self.direction = "right"
     self.frame = "attack"
-    hit = self.character.attack(self.target.character)
+    success = self.character.attack(self.target.character)
     if self.target.isIncapacitated(): self.target.lie()
-    elif hit:                         self.target.pain()
-    else:                             self.target.block()
+    elif success:                     self.target.hit()
+    else:                             self.target.defend()
     self.speed = SLOW
 
   def headToHeal(self):
