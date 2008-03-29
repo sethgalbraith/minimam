@@ -96,26 +96,24 @@ class Entity:
     self.goal = self.home
     self.nextState = self.stand
     if self.backward:
-        if self.isEscaping(): self.direction = "right"
-        else:                 self.direction = "left"
+        self.direction = "left"
         self.position = self.position[0] + RECOIL, self.position[1]
     else:
-        if self.isEscaping(): self.direction = "left"
-        else:                 self.direction = "right"
+        self.direction = "right"
         self.position = self.position[0] - RECOIL, self.position[1]
     self.frame == "pain"
 
   def defend(self):
     '''Begin the avoided-attack state'''
     self.goal = self.home
-    if self.isEscaping(): self.nextState = self.fear
-    else:                 self.nextState = self.stand
-    if self.backward:
-        if self.isEscaping(): self.direction = "right"
-        else:                 self.direction = "left"
+    if self.isEscaping():
+      self.nextState = self.fear
+      if self.backward: self.direction = "right"
+      else:             self.direction = "left"
     else:
-        if self.isEscaping(): self.direction = "left"
-        else:                 self.direction = "right"
+      self.nextState = self.stand
+      if self.backward: self.direction = "left"
+      else:             self.direction = "right"
     self.position = self.position[0], self.position[1] + SIDESTEP
     self.frame == "block"
 
