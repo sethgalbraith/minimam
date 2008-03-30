@@ -228,6 +228,7 @@ class Fight:
     '''One character's turn'''
     if self.entity.isIncapacitated() or self.entity.isGone(): return
     self.entity.startTurn()
+    self.selectMouse()
     while not (self.quit or self.entity.isTurnOver()):
       self.input()
       self.think()
