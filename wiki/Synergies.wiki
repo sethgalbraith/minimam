@@ -1,4 +1,5 @@
 #summary Party build/tactical bonuses.
+#labels Phase-Requirements
 
 = Introduction =
 
