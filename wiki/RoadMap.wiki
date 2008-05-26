@@ -1,0 +1,11 @@
+#summary What we are planning to do next with minimam
+#labels Phase-Implementation,Featured
+
+  * [menus] which will also require new graphics:
+    * inn/hall (player-character party selection)
+    * outdoors (choose cave, woods or castle battle)
+    * mountain cave battle background
+    * dark woods battle background
+    * castle battle background
+  * sound effects
+  * music
