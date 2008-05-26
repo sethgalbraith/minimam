@@ -1,4 +1,5 @@
 #summary The pre-combat phase of the game
+#labels Phase-Requirements,Featured
 
 We are dropping the [exploring exploration] phase of the game in favor of a simple menu system. The first menu is the interior of an inn or hall like Beowulf's Heorot where the player can select a party of heroes who are resting there: a mixed group (wizard, priest, warrior and rogue) a pair of warriors or a lone rogue. After selecting a party, the player is presented a travel menu of places where the party can go: a smoking mountain cave, a dark wood, a castle or back to the inn/hall. The choice of cave, wood or castle will determine both the background of the fighting part of the game. The combination of party and location will determine what type of enemies are fought. After the fight, the player returns to the travel menu. The various enemies could be something like this:
 
