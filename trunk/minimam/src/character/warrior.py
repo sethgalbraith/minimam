@@ -19,8 +19,8 @@ from character import Character
 
 class Warrior(Character):
 
-  def attackRoll(self):
+  def attackRoll(self, other):
     return self.roll() + 1
 
-  def defenseRoll(self):
+  def defenseRoll(self, other):
     return self.roll() + 1

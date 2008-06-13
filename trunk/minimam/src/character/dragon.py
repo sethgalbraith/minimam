@@ -38,16 +38,16 @@ class Dragon(Character):
     return True
 
   def attack(self, other):
-    if self.attackRoll() > other.defenseRoll():
+    if self.attackRoll(other) > other.defenseRoll(other):
       other.takeFireballDamage()
       return True
     else:
       return False
 
-  def attackRoll(self):
+  def attackRoll(self, other):
     return self.roll() + 1
 
-  def defenseRoll(self):
+  def defenseRoll(self, other):
     return self.roll() + 1
 
   def isHealer(self):

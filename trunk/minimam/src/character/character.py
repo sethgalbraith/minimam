@@ -72,10 +72,10 @@ class Character:
     '''
     return random.randrange(1,7) + self.getLevel()
 
-  def attackRoll(self):
+  def attackRoll(self, other):
     return self.roll()
 
-  def defenseRoll(self):
+  def defenseRoll(self, other):
     return self.roll()
 
   def hideRoll(self):
@@ -102,7 +102,7 @@ class Character:
     Try to attack another character.
     Returns True if the attack is successful, False if it fails.
     '''
-    if self.attackRoll() > other.defenseRoll():
+    if self.attackRoll(other) > other.defenseRoll(self):
       other.takeNormalDamage()
       return True
     else:
