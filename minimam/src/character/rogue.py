@@ -22,7 +22,13 @@ class Rogue(Character):
   def hideRoll(self):
     return self.roll() + 1
 
-  def defenseRoll(self):
+  def attackRoll(self, other):
+    if other.isEscaping():
+      return self.roll() + 1
+    else:
+      return self.roll()
+
+  def defenseRoll(self, other):
     if self.isEscaping():
       return self.roll() + 1
     else:

@@ -20,7 +20,7 @@ from character import Character
 class Wizard(Character):
 
   def attack(self, other):
-    if self.attackRoll() > other.defenseRoll():
+    if self.attackRoll(other) > other.defenseRoll(other):
       other.takeFireballDamage()
       return True
     else:
